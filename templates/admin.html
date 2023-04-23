@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Registration{% endblock %}
+{% block content %}
+<h1>Welcome Admin</h1>
+<button>Generate Report</button>
+<button>Contact IT</button>
+
+
+<!--    <nav>-->
+<!--        <div class="wrapper">-->
+<!--            <ul>-->
+<!--                <li><a href="{{url_for('home')}}">Home</a></li>-->
+<!--                <li><a href="">User Guide</a></li>-->
+<!--                <li><a href="">Admin Profile</a></li>-->
+<!--                <li><a href="">About</a></li>-->
+<!--                <li><a href="{{url_for('logout')}}">Log Out</a></li>-->
+<!--            </ul>-->
+<!--        </div>-->
+<!--    </nav>-->
+    <form action="/admin" method="POST">
+    <div class="container">
+<!--        <h1>Welcome Admin</h1>-->
+<!--        <button>Generate Report</button>-->
+<!--        <button>Contact IT</button>-->
+
+        <pre></pre>
+        <Input type="search" name="title" placeholder="Item lookup"></Input>
+        <button>Browse</button>
+
+        <pre></pre>
+        <Input type="search" placeholder="Member lookup"></Input>
+        <button>Search</button>
+        
+    </div>
+    </form>
+    <div>
+        <ul>
+            {% for row in book_list %}
+              {% for book in row %}
+            <li>{{ book }}&nbsp</li>
+              {% endfor %}
+              </br>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

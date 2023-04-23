@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<h1>Login From</h1>
+<form action="/loginMbr" method="post">
+
+    <div class="form-grp">
+        <label for="username">Username</label>
+        <input type="text" name="username" class="form-control">
+    </div>
+    <pre></pre>
+
+    <div class="form-grp">
+        <label for="password">Password</label>
+        <input type="password" name="password" class="form-control">
+    </div>
+    <pre></pre>
+
+    <button class="primary" type="submit">Login</button>
+    
+    <pre></pre>
+    <div>
+        <a href="{{url_for('adminlogin')}}">Administration Access</a>
+    </div>
+</form>
+{% endblock %}

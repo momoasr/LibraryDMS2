@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Registration{% endblock %}
+{% block content %}
+<body>
+
+<!--    <nav>-->
+<!--        <div class="wrapper">-->
+<!--            <ul>-->
+<!--                <li><a href="{{url_for('home')}}">Home</a></li>-->
+<!--                <li><a href="">Rental List</a></li>-->
+<!--                <li><a href="">cart</a></li>-->
+<!--                <li><a href="">Account</a></li>-->
+<!--                <li><a href="">About</a></li>-->
+<!--                <li><a href="{{url_for('logout')}}">Log Out</a></li>-->
+
+<!--            </ul>-->
+
+<!--        </div>-->
+<!--        <form action="/members" method="POST">-->
+<!--            <div class="rightNav">-->
+<!--                <label>Search By:</label>-->
+
+<!--<select name="criteria" id="criteria">-->
+<!--  <option value="title">Title</option>-->
+<!--  <option value="author">Author</option>-->
+<!--  <option value="genre">Genre</option>-->
+<!--</select>-->
+<!--            <input type="text" name="search" id="search">-->
+<!--            <button class="btn btn-sm">Search</button>-->
+<!--        </div>-->
+
+<!--        </form>-->
+
+    </nav>
+
+    <div class="container">
+        <h1>Welcome User</h1>
+        <h3>Your Card Number: </h3><p>{{card_number}}</p>
+        <h3>First Name: </h3><p>{{first_name}}</p>
+        <h3>Last Name: </h3><p>{{last_name}}</p>
+        <h3>Email Address: </h3><p>{{email}}</p>
+        <h3>DOB: </h3><p>{{dob}}</p>
+    </div>
+    <div>
+        <ul>
+            {% for row in book_list %}
+              {% for book in row %}
+            <li>{{ book }}&nbsp</li>
+              {% endfor %}
+              </br>
+            {% endfor %}
+        </ul>
+    </div>
+</body>  
+{% endblock %}
