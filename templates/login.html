@@ -5,7 +5,7 @@
 <form action="/loginMbr" method="post">
 
     <div class="form-grp">
-        <label for="username">Username</label>
+        <label for="username">Card Number</label>
         <input type="text" name="username" class="form-control">
     </div>
     <pre></pre>
@@ -20,7 +20,11 @@
     
     <pre></pre>
     <div>
+        <a href="{{url_for('forgotPassword')}}">Forgot Password</a>
+    </div>
+    <div>
         <a href="{{url_for('adminlogin')}}">Administration Access</a>
     </div>
+
 </form>
 {% endblock %}

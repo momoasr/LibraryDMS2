@@ -131,7 +131,8 @@ def book_records(**criteria):
         connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
 
         sql_select_query = "select distinct b.title, b.author, b.genre, bc.media_type from book b " \
-                           "inner join bookcopy bc where ucase(b." + search_type + ") like '%" + value + "%'"
+                           "inner join bookcopy bc on b.book_id = bc.book_id " \
+                           "where ucase(b." + search_type + ") like '%" + value + "%'"
 
         cursor = connection.cursor()
         cursor.execute(sql_select_query)
@@ -154,6 +155,46 @@ def book_records(**criteria):
             connection.close()
 
     return books
+
+
+def report_allcopies():
+    try:
+        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+
+        sql_select_query = "select distinct bc.copy_id, b.title, b.author, b.genre, bc.media_type from book b " \
+                           "inner join bookcopy bc on b.book_id = bc.book_id"
+
+        cursor = connection.cursor()
+        cursor.execute(sql_select_query)
+        records = cursor.fetchall()
+
+        books = []
+        for row in records:
+            copy_id = row[0]
+            title = row[1]
+            author = row[2]
+            genre = row[3]
+            media_type = row[4]
+            books.append([copy_id, title, author, genre, media_type])
+            # print('title: ' + title + ' author: ' + author + ' genre: ' + genre + ' type: ' + media_type)
+
+    except mysql.connector.Error as error:
+        print("Failed {}".format(error))
+
+    finally:
+        if connection.is_connected():
+            connection.close()
+
+    return books
+
+
+def validate(lcn, first, last, email_entered):
+    card_number, first_name, last_name, dob, email = pull_records(lcn)
+    print(card_number, first_name, last_name, email)
+    print(first, last, email_entered)
+    if (first == first_name) and (last == last_name) and (email_entered == email): #and dob_entered == dob:
+        return True
+    return False
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -244,6 +285,50 @@ def loginMbr():
         session['email'] = lcn
         return redirect('/members')
     return render_template('Login.html')
+
+
+@app.route('/forgotPassword', methods=['GET', 'POST'])
+def forgotPassword():
+    if request.method == 'POST':
+        lcn = request.form['cardnumber']
+        first_name = request.form['firstname']
+        last_name = request.form['lastname']
+        email = request.form['email']
+        password1 = request.form['password1']
+        password2 = request.form['password2']
+
+        if validate(lcn, first_name, last_name, email):
+            if password1 == password2:
+                hashedpwd = hash_pw(password1)
+                string = hashedpwd.decode('utf-8')
+                try:
+                    connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+
+                    sql = "UPDATE memberpass SET hashedpw = %s WHERE card_number = %s"
+                    val = (string, lcn)
+
+                    cursor = connection.cursor()
+                    cursor.execute(sql, val)
+                    connection.commit()
+                    cursor.close()
+
+                except mysql.connector.Error as error:
+                    print("Failed {}".format(error))
+
+                finally:
+                    if connection.is_connected():
+                        connection.close()
+
+                message = 'Password updated successfully!'
+                return render_template('forgotPW.html', message=message)
+
+            message = 'Passwords did not match!'
+            return render_template('forgotPW.html', message=message)
+
+        message = 'Invalid information entered!'
+        return render_template('forgotPW.html', message=message)
+
+    return render_template('forgotPW.html')
 
 
 @app.route('/adminlogin')
