@@ -1,7 +1,45 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
 {% block content %}
-    <pre></pre>
-    <h1>Home</h1>
-    <pre></pre>
+<pre></pre>
+<h1>Home</h1>
+<pre></pre>
+<div class="row carousel">
+    <div class="col-12">
+        <h4>Graphic Novels</h4>
+    </div>
+    <div class="col-12 d-flex p-3">
+        <div class=carousel-arrow-wrapper"">
+            <i class="bi bi-chevron-left carousel-arrow"></i>
+        </div>
+        <div style="flex-grow: 1; padding: 0 1rem;">
+            <img class="carousel-image" src="{{ url_for('static', filename='images/livre1.jpg') }}" alt="">
+            <img class="carousel-image" src="{{ url_for('static', filename='images/livre2.jpg') }}" alt="">
+            <img class="carousel-image" src="{{ url_for('static', filename='images/livre3.jpg') }}" alt="">
+            <img class="carousel-image" src="{{ url_for('static', filename='images/livre4.jpg') }}" alt="">
+        </div>
+        <div class="carousel-arrow-wrapper">
+            <i class="bi bi-chevron-right carousel-arrow"></i>
+        </div>
+    </div>
+</div>
+<div class="row carousel">
+    <div class="col-12">
+        <h4>Graphic Novels</h4>
+    </div>
+    <div class="col-12 d-flex p-3">
+        <div class=carousel-arrow-wrapper"">
+            <i class="bi bi-chevron-left carousel-arrow"></i>
+        </div>
+        <div class="carousel-image-wrapper">
+            <img class="carousel-image" src="{{ url_for('static', filename='images/livre1.jpg') }}" alt="">
+            <img class="carousel-image" src="{{ url_for('static', filename='images/livre2.jpg') }}" alt="">
+            <img class="carousel-image" src="{{ url_for('static', filename='images/livre3.jpg') }}" alt="">
+            <img class="carousel-image" src="{{ url_for('static', filename='images/livre4.jpg') }}" alt="">
+        </div>
+        <div class="carousel-arrow-wrapper">
+            <i class="bi bi-chevron-right carousel-arrow"></i>
+        </div>
+    </div>
+</div>
 {% endblock %}
