@@ -31,16 +31,46 @@
 
 <!--        </form>-->
 
-    </nav>
+<script>
+  function showText() {
+      var text = document.getElementById("hidden");
+      if (text.style.display === "none") {text.style.display = "block";}
+      else {text.style.display = "none";}
+  }
+  </script>
 
     <div class="container">
-        <h1>Welcome User</h1>
-        <h3>Your Card Number: </h3><p>{{card_number}}</p>
-        <h3>First Name: </h3><p>{{first_name}}</p>
+        <h1>Welcome {{first_name}}</h1>
+        <h3>Your New Libary Card Number Is: </h3><p><strong>{{card_number}}</strong></p>
+        <pre></pre>
+        
+        <div>
+          <ul>
+            <h3>Books currently being rented</h3>
+            <li>Title of Book that's been rented</li>
+          </ul>
+        </div>
+        <pre></pre>
+
+        <button type='button' onclick="showText()">Account details</button>
+        <button>Set-up Return</button>
+        <div id='hidden' style='display: none'>
+          <ul>
+            <li>Name: {{first_name}} {{last_name}}</li>
+            <li>Date of Birth: {{dob}}</li>
+            <li>Email Address: {{email}}</li>
+          </ul>
+          <button>Reset Password</button>
+          <button>Request Account Deletion</button>
+        </div>
+        
+
+        <!-- <h3>First Name: </h3><p>{{first_name}}</p>
         <h3>Last Name: </h3><p>{{last_name}}</p>
-        <h3>Email Address: </h3><p>{{email}}</p>
-        <h3>DOB: </h3><p>{{dob}}</p>
+        <h3> Email Address: </h3><p>{{email}}</p>
+        <h3>DOB: </h3><p>{{dob}}</p> -->
     </div>
+
 <!--    <div>-->
 <!--        <ul>-->
 <!--            {% for row in book_list %}-->
@@ -51,5 +81,6 @@
 <!--            {% endfor %}-->
 <!--        </ul>-->
 <!--    </div>-->
+
 </body>  
 {% endblock %}

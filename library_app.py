@@ -8,7 +8,7 @@ import bcrypt
 
 host = 'localhost'
 user = 'root'
-db_password = 'MysqlDB1'
+db_password = 'Nicholas'
 schema = 'library'
 
 app = Flask(__name__)
@@ -274,6 +274,11 @@ def registerMbr():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     return render_template('login.html')
+
+@app.route('/about', methods=['GET', 'POST'])
+def about():
+    return render_template('about.html')
+
 
 
 @app.route('/loginMbr', methods=['GET', 'POST'])
