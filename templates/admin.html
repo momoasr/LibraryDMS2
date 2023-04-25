@@ -5,26 +5,20 @@
 <button>Generate Report</button>
 <button>Contact IT</button>
 
-
-<!--    <nav>-->
-<!--        <div class="wrapper">-->
-<!--            <ul>-->
-<!--                <li><a href="{{url_for('home')}}">Home</a></li>-->
-<!--                <li><a href="">User Guide</a></li>-->
-<!--                <li><a href="">Admin Profile</a></li>-->
-<!--                <li><a href="">About</a></li>-->
-<!--                <li><a href="{{url_for('logout')}}">Log Out</a></li>-->
-<!--            </ul>-->
-<!--        </div>-->
-<!--    </nav>-->
     <form action="/admin" method="POST">
     <div class="container">
-<!--        <h1>Welcome Admin</h1>-->
-<!--        <button>Generate Report</button>-->
-<!--        <button>Contact IT</button>-->
+<pre></pre>
+                <label>Search By:</label>
+
+<select name="criteria" id="criteria">
+  <option value="title">Title</option>
+  <option value="author">Author</option>
+  <option value="genre">Genre</option>
+</select>
+
 
         <pre></pre>
-        <Input type="search" name="title" placeholder="Item lookup"></Input>
+        <Input type="search" name="value" placeholder="Item lookup"></Input>
         <button>Browse</button>
 
         <pre></pre>
@@ -33,14 +27,23 @@
         
     </div>
     </form>
-    <div >
-        <ul>
-            {% for row in book_list %}
-              {% for book in row %}
-            <li> {{book}}&nbsp </li>
-              {% endfor %}
-              </br>
-            {% endfor %}
-        </ul>
-    </div>
+    <table>
+  <thead>
+    <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Genre</th>
+        <th>Media Type</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for row in book_list %}
+    <tr>
+        {% for book in row %}
+        <td>{{book}}&nbsp&nbsp&nbsp&nbsp</td>
+        {% endfor %}
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
 {% endblock %}
