@@ -201,7 +201,9 @@ def validate(lcn, first, last, email_entered):
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == 'POST':
+        drop_down = request.form['value']
         search_value = request.form['search']
+        print(drop_down, search_value)
     return render_template('home.html')
 
 
