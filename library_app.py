@@ -278,6 +278,11 @@ def login():
     return render_template('login.html')
 
 
+@app.route('/about', methods=['GET', 'POST'])
+def about():
+    return render_template('about.html')
+
+
 @app.route('/loginMbr', methods=['GET', 'POST'])
 def loginMbr():
     if request.method == 'POST':
