@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Book Edit{% endblock %}
+{% block content %}
+<h1>Edit Book Information</h1>
+<form action="/book_edit" method="POST">
+
+    <div class="form-grp">
+        <label for="book_id">Book ID Number</label>
+        <input type="text" name="book_id" class="form-control" value={{book_id}}>
+    </div>
+    <pre></pre>
+
+    <div class="form-grp">
+        <label for="title">Title</label>
+        <input type="text" name="title" class="form-control">
+    </div>
+    <pre></pre>
+    <div class="form-grp">
+        <label for="author">Author</label>
+        <input type="text" name="author" class="form-control">
+    </div>
+    <pre></pre>
+
+    <div class="form-grp">
+        <label for="genre">Genre</label>
+        <input type="text" name="genre" class="form-control">
+    </div>
+    <pre></pre>
+
+    <button class="primary" type="submit">Edit</button>
+
+    <p>{{message}}</p>
+        <form action = "/book_edit" method='post'>
+            <input type="submit" value="Clear"/>
+        </form>
+</form>
+{% endblock %}

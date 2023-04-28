@@ -22,11 +22,21 @@
         <button>Browse</button>
 
         <pre></pre>
-        <Input type="search" placeholder="Member lookup"></Input>
+                <label>Search By:</label>
+
+<select name="criteria2" id="mbrcriteria">
+  <option value="card_number">Card Number</option>
+  <option value="last_name">Last Name</option>
+  <option value="email_address">Email</option>
+</select>
+
+        <pre></pre>
+        <Input type="search" name="value2" placeholder="Member lookup"></Input>
         <button>Search</button>
         
     </div>
-    </form>
+
+    <a href="{{url_for('book_edit')}}">Edit a book entry</a>
     <table>
   <thead>
     <tr>
@@ -34,6 +44,7 @@
         <th>Author</th>
         <th>Genre</th>
         <th>Media Type</th>
+        <th>Book ID</th>
     </tr>
   </thead>
   <tbody>
@@ -42,8 +53,38 @@
         {% for book in row %}
         <td>{{book}}&nbsp&nbsp&nbsp&nbsp</td>
         {% endfor %}
+        <td>
+            <button type="submit" name="update" value={{row[4]}}>Update</button>
+        </td>
     </tr>
   {% endfor %}
   </tbody>
 </table>
+
+    <table>
+  <thead>
+    <tr>
+        <th>Card Number</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Birth Date</th>
+        <th>Email Address</th>
+        <th>Status</th>
+        <th>Copy ID</th>
+
+    </tr>
+  </thead>
+  <tbody>
+  {% for row in member_list %}
+    <tr>
+        {% for member in row %}
+        <td>{{member}}&nbsp&nbsp&nbsp&nbsp</td>
+
+        {% endfor %}
+    </tr>
+
+  {% endfor %}
+  </tbody>
+</table>
+        </form>
 {% endblock %}

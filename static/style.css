@@ -31,3 +31,34 @@ body {
   height: 10rem;
   margin-right: 2rem;
 }
+
+/* For tables */
+
+table, th, td {
+  border-collapse: collapse;
+  align-content: space-evenly;
+  padding: 15px;
+}
+
+table{
+  margin-top: 20px;
+  width: 100%;
+  border: 2px solid black;
+}
+
+
+th {
+  font-weight: bold;
+  border: 2px solid black;
+  align-items: center;
+}
+
+td {
+    border: 2px solid black;
+    background-color:rgb(204, 207, 209);
+  }
+
+  table tr td:nth-child(2) {
+    
+    width: 400px;
+  }
