@@ -158,6 +158,23 @@ def update_book(book_id, title, author, genre):
             connection.close()
 
 
+def delete_bookcopy(copy_id):
+    try:
+        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+
+        # delete the user's account from the database
+        cursor = connection.cursor()
+        cursor.execute("DELETE FROM bookcopy WHERE copy_id = %s", (copy_id,))
+        connection.commit()
+
+    except mysql.connector.Error as error:
+        print("Failed {}".format(error))
+
+    finally:
+        if connection.is_connected():
+            connection.close()
+
+
 def pull_password(lcn):
     try:
         connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
@@ -240,8 +257,8 @@ def book_records(**criteria):
     try:
         connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
 
-        sql_select_query = "select distinct b.title, b.author, b.genre, bc.media_type, b.book_id from book b " \
-                           "inner join bookcopy bc on b.book_id = bc.book_id " \
+        sql_select_query = "select distinct b.title, b.author, b.genre, bc.media_type, b.book_id, bc.copy_id " \
+                           "from book b inner join bookcopy bc on b.book_id = bc.book_id " \
                            "where ucase(b." + search_type + ") like '%" + value + "%'"
 
         cursor = connection.cursor()
@@ -255,7 +272,8 @@ def book_records(**criteria):
             genre = row[2]
             media_type = row[3]
             book_id = row[4]
-            books.append([title, author, genre, media_type, book_id])
+            copy_id = row[5]
+            books.append([title, author, genre, media_type, book_id, copy_id])
             # print('title: ' + title + ' author: ' + author + ' genre: ' + genre + ' type: ' + media_type)
 
     except mysql.connector.Error as error:
@@ -520,9 +538,16 @@ def admin():
             drop_down = request.form['criteria2']
             member_list = member_records(type=drop_down, value=search_value)
             return render_template('admin.html', member_list=member_list)
-        if request.form['update']:
+        if 'update' in request.form:
             book_id = request.form['update']
             return render_template('bookedit.html', book_id=book_id)
+        elif 'delete' in request.form:
+            copy_id = request.form['delete']
+            delete_bookcopy(copy_id)
+            message = 'Copy Successfully Deleted'
+            return render_template('admin.html', message=message)
+        else:
+            return render_template('admin.html')
 
     return render_template('admin.html')
 

@@ -37,6 +37,7 @@
     </div>
 
     <a href="{{url_for('book_edit')}}">Edit a book entry</a>
+        <p>{{message}}</p>
     <table>
   <thead>
     <tr>
@@ -45,6 +46,7 @@
         <th>Genre</th>
         <th>Media Type</th>
         <th>Book ID</th>
+        <th>Copy ID</th>
     </tr>
   </thead>
   <tbody>
@@ -55,6 +57,9 @@
         {% endfor %}
         <td>
             <button type="submit" name="update" value={{row[4]}}>Update</button>
+        </td>
+        <td>
+            <button type="submit" name="delete" value={{row[5]}}>Delete</button>
         </td>
     </tr>
   {% endfor %}
