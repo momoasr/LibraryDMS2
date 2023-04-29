@@ -265,7 +265,7 @@ def pull_records(lcn):
     return card_number, first_name, last_name, birth_date, email, status, copy_id
 
 
-def book_records(**criteria):
+def book_search(**criteria):
     search_type = criteria['type']
     value = criteria['value']
     try:
@@ -289,6 +289,41 @@ def book_records(**criteria):
             copy_id = row[5]
             books.append(Book(int(book_id), title, author, ''))
             # books.append([title, author, genre, media_type, book_id, copy_id])
+            # print('title: ' + title + ' author: ' + author + ' genre: ' + genre + ' type: ' + media_type)
+
+    except mysql.connector.Error as error:
+        print("Failed {}".format(error))
+
+    finally:
+        if connection.is_connected():
+            connection.close()
+
+    return books
+
+
+def book_records(**criteria):
+    search_type = criteria['type']
+    value = criteria['value']
+    try:
+        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+
+        sql_select_query = "select distinct b.title, b.author, b.genre, bc.media_type, b.book_id, bc.copy_id " \
+                           "from book b inner join bookcopy bc on b.book_id = bc.book_id " \
+                           "where ucase(b." + search_type + ") like '%" + value + "%'"
+
+        cursor = connection.cursor()
+        cursor.execute(sql_select_query)
+        records = cursor.fetchall()
+
+        books = []
+        for row in records:
+            title = row[0]
+            author = row[1]
+            genre = row[2]
+            media_type = row[3]
+            book_id = row[4]
+            copy_id = row[5]
+            books.append([title, author, genre, media_type, book_id, copy_id])
             # print('title: ' + title + ' author: ' + author + ' genre: ' + genre + ' type: ' + media_type)
 
     except mysql.connector.Error as error:
@@ -392,7 +427,7 @@ def home():
     search_value = request.args.get('search')
     print(f'search: {search_value}')
     if search_value:
-        books = book_records(type='title', value=search_value)
+        books = book_search(type='title', value=search_value)
     else:
         books = [
             Book(1001, 'Da Vinci Code,The', 'Brown, Dan', ''),
