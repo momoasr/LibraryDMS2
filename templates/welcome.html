@@ -41,12 +41,12 @@
 
     <div class="container">
         <h1>Welcome {{first_name}}</h1>
-        <h3>Your New Libary Card Number Is: </h3><p><strong>{{card_number}}</strong></p>
+        <h3>Your Libary Card Number is: </h3><p><strong>{{card_number}}</strong></p>
         <pre></pre>
         
         <div>
           <ul>
-            <h3>Books currently being rented</h3>
+        <h3>Books currently being rented:</h3>
             <li>Title of Book that's been rented</li>
           </ul>
         </div>
@@ -60,8 +60,13 @@
             <li>Date of Birth: {{dob}}</li>
             <li>Email Address: {{email}}</li>
           </ul>
-          <button>Reset Password</button>
-          <button>Request Account Deletion</button>
+          <div>
+        <a href="{{url_for('forgotPassword')}}">Forgot Password</a>
+    </div>
+          <form method="post" action="{{ url_for('delete_account') }}">
+            <button>Request Account Deletion</button>
+            </form>
+
         </div>
         
 
