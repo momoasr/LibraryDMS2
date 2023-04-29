@@ -21,13 +21,20 @@ body {
   top: 50%;
 }
 
-.carousel-image-wrapper {
+.carousel-image-block {
   flex-grow: 1; 
   padding: 0 1rem;
 }
 
-.carousel-image {
+.carousel-image-wrapper {
   width: 8.5rem;
+}
+
+.carousel-image {  
   height: 10rem;
   margin-right: 2rem;
+}
+
+.pointer {
+  cursor: pointer;
 }

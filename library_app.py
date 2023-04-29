@@ -16,6 +16,20 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'tempsecretkey'
 
 
+class Book:
+    def __init__(self, book_id, title, author, img_url):
+        self.book_id = book_id
+        self.title = title
+        self.author = author
+        self.img_url = img_url
+
+
+class Carousel:
+    def __init__(self, books, category):
+        self.books = books
+        self.category = category
+
+
 def authorized(f):
     @wraps(f)
     def decorator(*args, **kwargs):
@@ -47,7 +61,8 @@ def check_member(lcn):
     max_card = 0
     try:
         # connect to mysql database
-        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+        connection = mysql.connector.connect(
+            host=host, database=schema, user=user, password=db_password)
 
         sql_select_query = "select min(card_number), max(card_number) from members"
         cursor = connection.cursor()
@@ -72,10 +87,12 @@ def check_member(lcn):
 
 def pull_password(lcn):
     try:
-        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+        connection = mysql.connector.connect(
+            host=host, database=schema, user=user, password=db_password)
 
         # the below line is the select statement to pull the members records based on the LCN
-        sql_select_query = "select hashedpw from memberpass where card_number = " + str(lcn)
+        sql_select_query = "select hashedpw from memberpass where card_number = " + \
+            str(lcn)
         cursor = connection.cursor()
         cursor.execute(sql_select_query)
         records = cursor.fetchall()
@@ -95,10 +112,12 @@ def pull_password(lcn):
 def pull_records(lcn):
     try:
         # connect to mysql database
-        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+        connection = mysql.connector.connect(
+            host=host, database=schema, user=user, password=db_password)
 
         # the below line is the select statement to pull the members records based on the LCN
-        sql_select_query = "select * from members where card_number = " + str(lcn)
+        sql_select_query = "select * from members where card_number = " + \
+            str(lcn)
         cursor = connection.cursor()
         # execute the select statement and fetch the results
         cursor.execute(sql_select_query)
@@ -128,11 +147,13 @@ def book_records(**criteria):
     search_type = criteria['type']
     value = criteria['value']
     try:
-        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+        connection = mysql.connector.connect(
+            host=host, database=schema, user=user, password=db_password)
 
         sql_select_query = "select distinct b.title, b.author, b.genre, bc.media_type from book b " \
                            "inner join bookcopy bc on b.book_id = bc.book_id " \
-                           "where ucase(b." + search_type + ") like '%" + value + "%'"
+                           "where ucase(b." + search_type + \
+            ") like '%" + value + "%'"
 
         cursor = connection.cursor()
         cursor.execute(sql_select_query)
@@ -159,7 +180,8 @@ def book_records(**criteria):
 
 def report_allcopies():
     try:
-        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+        connection = mysql.connector.connect(
+            host=host, database=schema, user=user, password=db_password)
 
         sql_select_query = "select distinct bc.copy_id, b.title, b.author, b.genre, bc.media_type from book b " \
                            "inner join bookcopy bc on b.book_id = bc.book_id"
@@ -193,16 +215,50 @@ def validate(lcn, first, last, email_entered):
         card_number, first_name, last_name, dob, email = pull_records(lcn)
         print(card_number, first_name, last_name, email)
         print(first, last, email_entered)
-        if (first == first_name) and (last == last_name) and (email_entered == email): #and dob_entered == dob:
+        # and dob_entered == dob:
+        if (first == first_name) and (last == last_name) and (email_entered == email):
             return True
     return False
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def home():
-    if request.method == 'POST':
-        search_value = request.form['search']
-    return render_template('home.html')
+    search_value = request.args.get('search')
+    print(f'search: {search_value}')
+    books = [
+        Book(1001, 'Da Vinci Code,The', 'Brown, Dan', ''),
+        Book(1002, 'Harry Potter and the Deathly Hallows', 'Rowling, J.K.', ''),
+        Book(1003, 'Fifty Shades of Grey', 'Larsson, Stieg', ''),
+        Book(1004, 'Time Traveler''s Wife,The', 'Niffenegger, Audrey', '')
+    ]
+
+    for b in books:
+        img_path = url_for('static', filename='images/')
+        b.img_url = f'{img_path}{b.book_id}.png'
+
+    cars = [
+        Carousel(books, 'Romance & Sagas'),
+        Carousel(books, 'Young Adult Fiction')]
+
+    return render_template('home.html', carousels=cars)
+
+
+@app.route('/fetch-next-set', methods=['GET'])
+def fetch_next_set():
+    category = request.args.get('category')
+    print(f'category: {category}')
+    page = request.args.get('page')
+    print(f'search: {page}')
+
+    books = [
+        Book(1049, 'Memoirs of a Geisha', 'Golden, Arthur', ''),
+        Book(1056, 'Broker,The', 'Grisham, John', ''),
+    ]
+    for b in books:
+        img_path = url_for('static', filename='images/')
+        b.img_url = f'{img_path}{b.book_id}.png'
+        
+    return render_template('book_by_category.html', books=books)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -224,7 +280,8 @@ def registerMbr():
             hashedpwd = hash_pw(password1)
 
             try:
-                connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+                connection = mysql.connector.connect(
+                    host=host, database=schema, user=user, password=db_password)
 
                 # pull the last card number from the members table
                 max_card_number = "select max(card_number) from members"
@@ -265,7 +322,8 @@ def registerMbr():
                 if connection.is_connected():
                     connection.close()
 
-            card_number, first_name, last_name, dob, email = pull_records(new_card)
+            card_number, first_name, last_name, dob, email = pull_records(
+                new_card)
             return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
                                    email=email, dob=dob)
     return redirect('/register')
@@ -315,7 +373,8 @@ def forgotPassword():
                     hashedpwd = hash_pw(password1)
                     string = hashedpwd.decode('utf-8')
                     try:
-                        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+                        connection = mysql.connector.connect(
+                            host=host, database=schema, user=user, password=db_password)
 
                         sql = "UPDATE memberpass SET hashedpw = %s WHERE card_number = %s"
                         val = (string, lcn)
@@ -383,10 +442,12 @@ def members():
             criteria_type = request.form['criteria']
             print(criteria_type)
             book_list = book_records(type=criteria_type, value=title_input)
-            card_number, first_name, last_name, dob, email = pull_records(session['email'])
+            card_number, first_name, last_name, dob, email = pull_records(
+                session['email'])
             return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
                                    email=email, dob=dob, book_list=book_list)
-    card_number, first_name, last_name, dob, email = pull_records(session['email'])
+    card_number, first_name, last_name, dob, email = pull_records(
+        session['email'])
     return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
                            email=email, dob=dob)
 
