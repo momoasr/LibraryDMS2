@@ -287,7 +287,8 @@ def book_records(**criteria):
             media_type = row[3]
             book_id = row[4]
             copy_id = row[5]
-            books.append([title, author, genre, media_type, book_id, copy_id])
+            books.append(Book(int(book_id), title, author, ''))
+            # books.append([title, author, genre, media_type, book_id, copy_id])
             # print('title: ' + title + ' author: ' + author + ' genre: ' + genre + ' type: ' + media_type)
 
     except mysql.connector.Error as error:
@@ -390,20 +391,24 @@ def authenticate_PW(password):
 def home():
     search_value = request.args.get('search')
     print(f'search: {search_value}')
-    books = [
-        Book(1001, 'Da Vinci Code,The', 'Brown, Dan', ''),
-        Book(1002, 'Harry Potter and the Deathly Hallows', 'Rowling, J.K.', ''),
-        Book(1003, 'Fifty Shades of Grey', 'Larsson, Stieg', ''),
-        Book(1004, 'Time Traveler''s Wife,The', 'Niffenegger, Audrey', '')
-    ]
+    if search_value:
+        books = book_records(type='title', value=search_value)
+    else:
+        books = [
+            Book(1001, 'Da Vinci Code,The', 'Brown, Dan', ''),
+            Book(1002, 'Harry Potter and the Deathly Hallows', 'Rowling, J.K.', ''),
+            Book(1003, 'Fifty Shades of Grey', 'Larsson, Stieg', ''),
+            Book(1004, 'Time Traveler''s Wife,The', 'Niffenegger, Audrey', '')
+        ]
 
-    for b in books:
+    for b in books[0:4]:
         img_path = url_for('static', filename='images/')
         b.img_url = f'{img_path}{b.book_id}.png'
 
+    temp = books[0: 4]
     cars = [
-        Carousel(books, 'Romance & Sagas'),
-        Carousel(books, 'Young Adult Fiction')]
+        Carousel(temp, 'Romance & Sagas'),
+        Carousel(temp, 'Young Adult Fiction')]
 
     return render_template('home.html', carousels=cars)
 
@@ -414,14 +419,20 @@ def fetch_next_set():
     print(f'category: {category}')
     page = request.args.get('page')
     print(f'search: {page}')
-
+    # search_value = request.args.get('search')
+    # if search_value:
+    #     books = book_records(type='title', value=search_value)
+    # else:
     books = [
         Book(1049, 'Memoirs of a Geisha', 'Golden, Arthur', ''),
         Book(1056, 'Broker,The', 'Grisham, John', ''),
     ]
-    for b in books:
+    for b in books[4:8]:
+        print(b.title)
         img_path = url_for('static', filename='images/')
         b.img_url = f'{img_path}{b.book_id}.png'
+
+    # temp = books[4:8]
 
     return render_template('book_by_category.html', books=books)
 
@@ -491,7 +502,8 @@ def registerMbr():
                         connection.close()
 
                 card_number, first_name, last_name, dob, email, status, copy_id = pull_records(new_card)
-                return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
+                return render_template("welcome.html", card_number=card_number, first_name=first_name,
+                                       last_name=last_name,
                                        email=email, dob=dob)
         message = 'Passwords do not match!'
         return render_template('register.html', message=message)
