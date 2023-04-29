@@ -16,6 +16,20 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'tempsecretkey'
 
 
+class Book:
+    def __init__(self, book_id, title, author, img_url):
+        self.book_id = book_id
+        self.title = title
+        self.author = author
+        self.img_url = img_url
+
+
+class Carousel:
+    def __init__(self, books, category):
+        self.books = books
+        self.category = category
+
+
 def authorized(f):
     @wraps(f)
     def decorator(*args, **kwargs):
@@ -372,16 +386,44 @@ def authenticate_PW(password):
     return True
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def home():
-    if request.method == 'POST':
-        search_value = request.form['value']
-        drop_down = request.form['criteria']
-        url = request.endpoint
-        print(url)
-        book_list = book_records(type=drop_down, value=search_value)
-        return render_template('home.html', book_list=book_list)
-    return render_template('home.html')
+    search_value = request.args.get('search')
+    print(f'search: {search_value}')
+    books = [
+        Book(1001, 'Da Vinci Code,The', 'Brown, Dan', ''),
+        Book(1002, 'Harry Potter and the Deathly Hallows', 'Rowling, J.K.', ''),
+        Book(1003, 'Fifty Shades of Grey', 'Larsson, Stieg', ''),
+        Book(1004, 'Time Traveler''s Wife,The', 'Niffenegger, Audrey', '')
+    ]
+
+    for b in books:
+        img_path = url_for('static', filename='images/')
+        b.img_url = f'{img_path}{b.book_id}.png'
+
+    cars = [
+        Carousel(books, 'Romance & Sagas'),
+        Carousel(books, 'Young Adult Fiction')]
+
+    return render_template('home.html', carousels=cars)
+
+
+@app.route('/fetch-next-set', methods=['GET'])
+def fetch_next_set():
+    category = request.args.get('category')
+    print(f'category: {category}')
+    page = request.args.get('page')
+    print(f'search: {page}')
+
+    books = [
+        Book(1049, 'Memoirs of a Geisha', 'Golden, Arthur', ''),
+        Book(1056, 'Broker,The', 'Grisham, John', ''),
+    ]
+    for b in books:
+        img_path = url_for('static', filename='images/')
+        b.img_url = f'{img_path}{b.book_id}.png'
+
+    return render_template('book_by_category.html', books=books)
 
 
 @app.route('/register', methods=['GET', 'POST'])
