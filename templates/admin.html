@@ -2,10 +2,12 @@
 {% block title %}Registration{% endblock %}
 {% block content %}
 <h1>Welcome Admin</h1>
-<button>Generate Report</button>
+<form action="/admin" method="POST">
+    <button type="submit" name="mbr_report">Generate All Member Report</button>
+    <button type="submit" name="copy_report">Generate All Copies Report</button>
 <button>Contact IT</button>
 
-    <form action="/admin" method="POST">
+
     <div class="container">
 <pre></pre>
                 <label>Search By:</label>

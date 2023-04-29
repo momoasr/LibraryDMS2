@@ -362,6 +362,16 @@ def validate(lcn, first, last, email_entered):
     return False
 
 
+def authenticate_PW(password):
+    common_pws = ('password', 'password123', 'password1', '12345', '12345678', '111111')
+    for pw in common_pws:
+        if password == pw:
+            return False
+    if len(password) < 7:
+        return False
+    return True
+
+
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == 'POST':
@@ -390,53 +400,59 @@ def registerMbr():
         password2 = request.form['password2']
 
         if password1 == password2:
-            hashedpwd = hash_pw(password1)
+            if not authenticate_PW(password1):
+                message = 'Your password is too common or too short, please enter another'
+                return render_template('register.html', message=message)
+            else:
+                hashedpwd = hash_pw(password1)
 
-            try:
-                connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+                try:
+                    connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
 
-                # pull the last card number from the members table
-                max_card_number = "select max(card_number) from members"
-                cursor2 = connection.cursor()
-                cursor2.execute(max_card_number)
-                record = cursor2.fetchall()
+                    # pull the last card number from the members table
+                    max_card_number = "select max(card_number) from members"
+                    cursor2 = connection.cursor()
+                    cursor2.execute(max_card_number)
+                    record = cursor2.fetchall()
 
-                # check if there are existing card numbers and if so generate the next available number
-                for row in record:
-                    card = row[0]
-                    if not card:
-                        new_card = 1001
-                    else:
-                        new_card = card_number_generator(card)
+                    # check if there are existing card numbers and if so generate the next available number
+                    for row in record:
+                        card = row[0]
+                        if not card:
+                            new_card = 1001
+                        else:
+                            new_card = card_number_generator(card)
 
-                # insert statements to insert the data into the database tables
-                insert_member = """INSERT INTO members (card_number, first_name, last_name, birth_date, email_address)
-                                    VALUES (%s, %s, %s, %s, %s)"""
-                insert_pw = """INSERT INTO memberpass (card_number, hashedpw)
-                                                VALUES (%s, %s)"""
+                    # insert statements to insert the data into the database tables
+                    insert_member = """INSERT INTO members (card_number, first_name, last_name, birth_date, email_address)
+                                        VALUES (%s, %s, %s, %s, %s)"""
+                    insert_pw = """INSERT INTO memberpass (card_number, hashedpw)
+                                                    VALUES (%s, %s)"""
 
-                insert_record = (new_card, first_name, last_name, dob, email)
-                insert_record2 = (new_card, hashedpwd)
+                    insert_record = (new_card, first_name, last_name, dob, email)
+                    insert_record2 = (new_card, hashedpwd)
 
-                cursor = connection.cursor()
-                # execute both insert statements
-                cursor.execute(insert_member, insert_record)
-                cursor.execute(insert_pw, insert_record2)
-                connection.commit()
+                    cursor = connection.cursor()
+                    # execute both insert statements
+                    cursor.execute(insert_member, insert_record)
+                    cursor.execute(insert_pw, insert_record2)
+                    connection.commit()
 
-                cursor.close()
-                cursor2.close()
+                    cursor.close()
+                    cursor2.close()
 
-            except mysql.connector.Error as error:
-                print("Failed {}".format(error))
+                except mysql.connector.Error as error:
+                    print("Failed {}".format(error))
 
-            finally:
-                if connection.is_connected():
-                    connection.close()
+                finally:
+                    if connection.is_connected():
+                        connection.close()
 
-            card_number, first_name, last_name, dob, email, status, copy_id = pull_records(new_card)
-            return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
-                                   email=email, dob=dob)
+                card_number, first_name, last_name, dob, email, status, copy_id = pull_records(new_card)
+                return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
+                                       email=email, dob=dob)
+        message = 'Passwords do not match!'
+        return render_template('register.html', message=message)
     return redirect('/register')
 
 
@@ -546,6 +562,12 @@ def admin():
             delete_bookcopy(copy_id)
             message = 'Copy Successfully Deleted'
             return render_template('admin.html', message=message)
+        elif 'mbr_report' in request.form:
+            member_list = member_records(type='first_name', value='')
+            return render_template('admin.html', member_list=member_list)
+        elif 'copy_report' in request.form:
+            book_list = book_records(type='title', value='')
+            return render_template('admin.html', book_list=book_list)
         else:
             return render_template('admin.html')
 
