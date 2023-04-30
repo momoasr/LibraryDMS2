@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Member Edit{% endblock %}
+{% block content %}
+<h1>Edit Member Information</h1>
+<form action="/member_edit" method="POST">
+
+    <div class="form-grp">
+        <label for="card_number">Member Card Number</label>
+        <input type="text" name="card_number" class="form-control" value={{card_number}}>
+    </div>
+    <pre></pre>
+
+    <div class="form-grp">
+        <label for="first_name">First Name</label>
+        <input type="text" name="first_name" class="form-control">
+    </div>
+    <pre></pre>
+    <div class="form-grp">
+        <label for="last_name">Last Name</label>
+        <input type="text" name="last_name" class="form-control">
+    </div>
+    <pre></pre>
+
+    <div class="form-grp">
+        <label for="email_address">Email Address</label>
+        <input type="text" name="email_address" class="form-control">
+    </div>
+    <pre></pre>
+
+        <div class="form-grp">
+        <label for="status">Status</label>
+        <input type="text" name="status" class="form-control">
+    </div>
+    <pre></pre>
+
+
+    <button class="primary" type="submit">Edit</button>
+
+    <p>{{message}}</p>
+        <form action = "/member_edit" method='post'>
+            <input type="submit" value="Clear"/>
+        </form>
+</form>
+{% endblock %}

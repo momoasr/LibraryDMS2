@@ -1,0 +1,10 @@
+{%for book in books%}
+<div class="carousel-image-wrapper">
+    <img class="carousel-image mb-1" src="{{ book.img_url }}" alt="{{ book.title }}">
+    <span>
+        <a href="/details/{{book.book_id}}" class="btn btn-sm btn-primary">
+            Rent
+        </a>
+    </span>
+</div>
+{%endfor%}

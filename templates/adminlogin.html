@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Registration{% endblock %}
+{% block content %}
+
+<h1>Administration Access</h1>
+<form action="/adminlogin" method="POST">
+
+    <div class="form-grp">
+        <label for="employe_id">Employee ID</label>
+        <input type="text" name="employe_id" class="form-control">
+    </div>
+    <pre></pre>
+
+    <div class="form-grp">
+        <label for="password1">Password</label>
+        <input type="password" name="password1" class="form-control">
+    </div>
+    <pre></pre>
+
+    <button class="primary" type="submit">Login</button>
+
+    <pre></pre>
+    <div>
+        <a href="">Contact IT</a>
+    </div>
+
+</form>
+
+{% endblock %}
