@@ -54,18 +54,37 @@
 
         <button type='button' onclick="showText()">Account details</button>
         <button>Set-up Return</button>
+        
         <div id='hidden' style='display: none'>
-          <ul>
-            <li>Name: {{first_name}} {{last_name}}</li>
-            <li>Date of Birth: {{dob}}</li>
-            <li>Email Address: {{email}}</li>
-          </ul>
+          <div class="account">
+
+            <div class="head-container">
+            {{first_name}} {{last_name}}
+            <label for="name">Account Holder</label>
+            </div>
+            <div class="card-container">
+                <label for="cardnumber">Libary Card Number: {{card_number}}</label>
+            </div>
+            <div class="body-container">
+                <label for="">Date of Birth:</label>
+                {{dob}}
+                <pre></pre>
+                <label>Email Address:</label>
+                {{email}}
+                <pre></pre>
+                <a href="{{url_for('account')}}">Change Account Info</a>
+                <pre></pre>
+                <a href="{{url_for('forgotPassword')}}">Forgot Password</a>
+                <pre></pre>
+                <form method="post" action="{{ url_for('delete_account') }}">
+                  <button>Request Account Deletion</button>
+                </form>
+            </div>
+        </div>
           <div>
-        <a href="{{url_for('forgotPassword')}}">Forgot Password</a>
+        
     </div>
-          <form method="post" action="{{ url_for('delete_account') }}">
-            <button>Request Account Deletion</button>
-            </form>
+          
 
         </div>
     </div>

@@ -9,7 +9,7 @@ from datetime import date
 
 host = 'localhost'
 user = 'root'
-db_password = 'MysqlDB1'
+db_password = 'Nicholas'
 schema = 'library'
 
 app = Flask(__name__)
@@ -640,6 +640,42 @@ def login():
 @app.route('/about', methods=['GET', 'POST'])
 def about():
     return render_template('about.html')
+
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    return render_template('contact.html')
+
+@app.route('/account', methods=['GET', 'POST'])
+def account():
+    if request.method == 'POST':
+        if request.form['cardnumber']:
+            lcn = request.form['cardnumber']
+            first_name = request.form['firstname']
+            last_name = request.form['lastname']
+            email = request.form['email']
+            dob = request.form['dob']
+
+            try:
+                        connection = mysql.connector.connect(host=host, database=schema, user=user,
+                                                             password=db_password)
+
+                        sql = "UPDATE members SET first_name = %s, last_name = %s, birth_date = %s, email_address = %s WHERE card_number = %s"
+                        val = (first_name, last_name, dob, email, lcn)
+
+                        cursor = connection.cursor()
+                        cursor.execute(sql, val)
+                        connection.commit()
+                        cursor.close()
+
+            except mysql.connector.Error as error:
+                        print("Failed {}".format(error))
+
+            finally:
+                    if connection.is_connected():
+                            connection.close()
+
+    return render_template('account.html')
+
 
 
 @app.route('/forgotPassword', methods=['GET', 'POST'])

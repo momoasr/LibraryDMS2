@@ -62,3 +62,105 @@ td {
     
     width: 400px;
   }
+
+  /* contact form */
+
+  .contact_form{
+    width: 80%;
+    margin: 50px auto;
+    padding: 50px;
+    border: 2px solid black;
+    border-radius: 25px;
+  }
+
+  .contact_form label{
+    margin-bottom: 7px;
+    margin-right: 7px;
+  }
+
+  .contact_form input{
+    width: 200px;
+  }
+
+  .contact_form .inputs{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .issues{
+    display:block;
+    margin-bottom: 7px;
+  }
+  .issues option{
+    text-align: center;
+  }
+  .contact_form textarea{
+    width: 100%;
+    outline: none;
+    padding: 10px;
+  }
+
+  /* For account */
+
+  .account{
+    border: 1px solid black;
+    border-radius: 10px;
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    padding: 10px;
+    width: 70%;
+    margin: 100px;
+  }
+  .account p{
+    border: 2px outset black;
+    background-color: white;
+    border-radius: 15px;
+    padding: 15px;
+    
+  }
+
+  .head-container{
+    border: 2px outset black;
+    display: block;
+    padding-left: 20px;
+    margin-bottom: .5px;
+  }
+  .head-container label{
+    display: block;
+    text-emphasis: bold;
+    font-size: 12px;
+    
+  }
+
+  .card-container{
+    border: 2px outset black;
+    display: block;
+    padding-left: 20px;
+    margin-bottom: 5px;
+  }
+
+  .body-container{
+    border: 2px outset black;
+    display: block;
+    padding: 15px;
+    padding-left: 30px;
+    text-align: left;
+    
+  }
+  .body-container label{
+    display: block;
+    float: left;
+    padding-right: 50px;
+    
+    
+    
+
+  }
+  .body-container input{
+    display: block;
+    border-radius: 4px;
+    align-items: center;
+    margin-bottom: 25px;
+  }
