@@ -186,6 +186,44 @@ def delete_bookcopy(copy_id):
             connection.close()
 
 
+def update_member(card_number, first_name, last_name, email_address, status):
+    try:
+        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+
+        sql = "UPDATE members SET first_name = %s, last_name = %s, email_address = %s, " \
+              "status = %s WHERE card_number = %s"
+        val = (first_name, last_name, email_address, status, card_number)
+
+        cursor = connection.cursor()
+        cursor.execute(sql, val)
+        connection.commit()
+        cursor.close()
+
+    except mysql.connector.Error as error:
+        print("Failed {}".format(error))
+
+    finally:
+        if connection.is_connected():
+            connection.close()
+
+
+def delete_member(copy_id):
+    try:
+        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+        # delete the user's account from the database
+        cursor = connection.cursor()
+        cursor.execute("DELETE FROM members WHERE card_number = %s", (copy_id,))
+        cursor.execute("DELETE FROM memberpass WHERE card_number = %s", (copy_id,))
+        connection.commit()
+
+    except mysql.connector.Error as error:
+        print("Failed {}".format(error))
+
+    finally:
+        if connection.is_connected():
+            connection.close()
+
+
 def rent_bookcopy(copy_id):
     card_number, first_name, last_name, birth_date, email, status, copy_id, title = pull_records(session['card_number'])
     if not copy_id:
@@ -687,6 +725,14 @@ def admin():
             delete_bookcopy(copy_id)
             message = 'Copy Successfully Deleted'
             return render_template('admin.html', message=message)
+        if 'update2' in request.form:
+            card_number = request.form['update2']
+            return render_template('memberedit.html', card_number=card_number)
+        elif 'delete2' in request.form:
+            card_number = request.form['delete2']
+            delete_member(card_number)
+            message = 'Member Successfully Deleted'
+            return render_template('admin.html', message=message)
         elif 'mbr_report' in request.form:
             member_list = member_records(type='first_name', value='')
             return render_template('admin.html', member_list=member_list)
@@ -717,6 +763,27 @@ def book_edit():
         message = 'Please enter book ID!'
         return render_template('bookedit.html', message=message)
     return render_template('bookedit.html')
+
+
+@app.route('/member_edit', methods=['GET', 'POST'])
+@authorized_admin
+def member_edit():
+    if request.method == 'POST':
+        if request.form['card_number']:
+            if check_member(request.form['card_number']):
+                card_number = request.form['card_number']
+                first_name = request.form['first_name']
+                last_name = request.form['last_name']
+                email_address = request.form['email_address']
+                status = request.form['status']
+                update_member(card_number, first_name, last_name, email_address, status)
+                message = 'Member has been updated successfully!'
+                return render_template('memberedit.html', message=message)
+            message = 'The Member ID entered does not exist!'
+            return render_template('memberedit.html', message=message)
+        message = 'Please enter member ID!'
+        return render_template('memberedit.html', message=message)
+    return render_template('memberedit.html')
 
 
 @app.route('/members', methods=['GET', 'POST'])
