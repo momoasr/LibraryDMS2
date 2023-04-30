@@ -47,7 +47,7 @@
         <div>
           <ul>
         <h3>Books currently being rented:</h3>
-            <li>Title of Book that's been rented</li>
+            <li>{{title}}</li>
           </ul>
         </div>
         <pre></pre>
@@ -68,24 +68,45 @@
             </form>
 
         </div>
-        
-
-        <!-- <h3>First Name: </h3><p>{{first_name}}</p>
-        <h3>Last Name: </h3><p>{{last_name}}</p>
-        <h3> Email Address: </h3><p>{{email}}</p>
-        <h3>DOB: </h3><p>{{dob}}</p> -->
     </div>
+<pre></pre>
+<form action="/members" method="POST">
+                <label>Search By:</label>
 
-<!--    <div>-->
-<!--        <ul>-->
-<!--            {% for row in book_list %}-->
-<!--              {% for book in row %}-->
-<!--            <li>{{ book }}&nbsp</li>-->
-<!--              {% endfor %}-->
-<!--              </br>-->
-<!--            {% endfor %}-->
-<!--        </ul>-->
-<!--    </div>-->
+<select name="criteria" id="criteria">
+  <option value="title">Title</option>
+  <option value="author">Author</option>
+  <option value="genre">Genre</option>
+</select>
 
+
+        <pre></pre>
+        <Input type="search" name="value" placeholder="Item lookup"></Input>
+        <button>Browse</button>
+        <table>
+  <thead>
+    <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Genre</th>
+        <th>Media Type</th>
+        <th>Book ID</th>
+        <th>Copy ID</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for row in book_list %}
+    <tr>
+        {% for book in row %}
+        <td>{{book}}&nbsp&nbsp&nbsp&nbsp</td>
+        {% endfor %}
+        <td>
+            <button type="submit" name="rent" value={{row[5]}}>Rent</button>
+        </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</form>
 </body>  
 {% endblock %}

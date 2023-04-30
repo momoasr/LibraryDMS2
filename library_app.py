@@ -5,6 +5,7 @@ from functools import wraps
 import mysql.connector
 from flask import *
 import bcrypt
+from datetime import date
 
 host = 'localhost'
 user = 'root'
@@ -173,7 +174,6 @@ def delete_bookcopy(copy_id):
     try:
         connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
 
-        # delete the user's account from the database
         cursor = connection.cursor()
         cursor.execute("DELETE FROM bookcopy WHERE copy_id = %s", (copy_id,))
         connection.commit()
@@ -185,6 +185,36 @@ def delete_bookcopy(copy_id):
         if connection.is_connected():
             connection.close()
 
+
+def rent_bookcopy(copy_id):
+    card_number, first_name, last_name, birth_date, email, status, copy_id, title = pull_records(session['card_number'])
+    if not copy_id:
+        return False
+    try:
+        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+
+        sql = "UPDATE bookcopy SET checkout_status = %s WHERE copy_id = %s"
+        val = ('rented', copy_id)
+        cursor = connection.cursor()
+        cursor.execute(sql, val)
+        connection.commit()
+        sql = "UPDATE checkout SET checkout_date = %s WHERE copy_id = %s"
+        val = (date.today(), copy_id)
+        cursor.execute(sql, val)
+        connection.commit()
+        sql = "UPDATE members SET copy_id = %s WHERE card_number = %s"
+        val = (copy_id, session['card_number'])
+        cursor.execute(sql, val)
+        connection.commit()
+        cursor.close()
+
+    except mysql.connector.Error as error:
+        print("Failed {}".format(error))
+
+    finally:
+        if connection.is_connected():
+            connection.close()
+    return True
 
 def pull_password(lcn):
     try:
@@ -231,12 +261,20 @@ def pull_password_admin(employee_id):
 
 
 def pull_records(lcn):
+    print(lcn)
     try:
         # connect to mysql database
         connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
 
         # the below line is the select statement to pull the members records based on the LCN
-        sql_select_query = "select * from members where card_number = " + str(lcn)
+        sql_select_query = "select m.card_number, m.first_name, m.last_name, m.birth_date, m.email_address, m.status, " \
+                           "m.copy_id, bk.title" \
+                           " from members m " \
+                           "left outer join bookcopy b " \
+                           "on m.copy_id = b.copy_id " \
+                           "left outer join book bk " \
+                           "on b.book_id = bk.book_id " \
+                           "where m.card_number = " + str(lcn)
         cursor = connection.cursor()
         # execute the select statement and fetch the results
         cursor.execute(sql_select_query)
@@ -251,6 +289,7 @@ def pull_records(lcn):
             email = row[4]
             status = row[5]
             copy_id = row[6]
+            title = row[7]
 
     except mysql.connector.Error as error:
         print("Failed {}".format(error))
@@ -259,7 +298,7 @@ def pull_records(lcn):
         if connection.is_connected():
             connection.close()
 
-    return card_number, first_name, last_name, birth_date, email, status, copy_id
+    return card_number, first_name, last_name, birth_date, email, status, copy_id, title
 
 
 def book_search(**criteria):
@@ -306,7 +345,7 @@ def book_records(**criteria):
 
         sql_select_query = "select distinct b.title, b.author, b.genre, bc.media_type, b.book_id, bc.copy_id " \
                            "from book b inner join bookcopy bc on b.book_id = bc.book_id " \
-                           "where ucase(b." + search_type + ") like '%" + value + "%'"
+                           "where ucase(b." + search_type + ") like '%" + value + "%' and bc.checkout_status = 'available'"
 
         cursor = connection.cursor()
         cursor.execute(sql_select_query)
@@ -401,9 +440,9 @@ def report_allcopies():
 
 def validate(lcn, first, last, email_entered):
     if check_member(lcn):
-        card_number, first_name, last_name, dob, email, status, copy_id = pull_records(lcn)
-        print(card_number, first_name, last_name, email)
-        print(first, last, email_entered)
+        card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(lcn)
+        # print(card_number, first_name, last_name, email)
+        # print(first, last, email_entered)
         if (first == first_name) and (last == last_name) and (email_entered == email):  # and dob_entered == dob:
             return True
     return False
@@ -533,7 +572,7 @@ def registerMbr():
                     if connection.is_connected():
                         connection.close()
 
-                card_number, first_name, last_name, dob, email, status, copy_id = pull_records(new_card)
+                card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(new_card)
                 return render_template("welcome.html", card_number=card_number, first_name=first_name,
                                        last_name=last_name,
                                        email=email, dob=dob)
@@ -684,16 +723,23 @@ def book_edit():
 @authorized
 def members():
     if request.method == 'POST':
-        if request.form['search'] and request.form['criteria']:
-            title_input = request.form['search']
-            criteria_type = request.form['criteria']
-            book_list = book_records(type=criteria_type, value=title_input)
-            card_number, first_name, last_name, dob, email, status, copy_id = pull_records(session['card_number'])
+        if request.form['value'] and request.form['criteria']:
+            search_value = request.form['value']
+            drop_down = request.form['criteria']
+            book_list = book_records(type=drop_down, value=search_value)
+            card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(session['card_number'])
             return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
-                                   email=email, dob=dob, book_list=book_list)
-    card_number, first_name, last_name, dob, email, status, copy_id = pull_records(session['card_number'])
+                                   email=email, dob=dob, book_list=book_list, title=title)
+        if 'rent' in request.form:
+            copy_id = request.form['rent']
+            rent_bookcopy(copy_id)
+            card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(
+                session['card_number'])
+            return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
+                                   email=email, dob=dob, title=title)
+    card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(session['card_number'])
     return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
-                           email=email, dob=dob)
+                           email=email, dob=dob, title=title)
 
 
 @app.route('/delete_account', methods=['GET', 'POST'])
