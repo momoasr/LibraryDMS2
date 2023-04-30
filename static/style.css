@@ -32,6 +32,14 @@ body {
   margin-right: 2rem;
 }
 
+.pointer {
+  cursor: pointer;
+}
+
+.hide-elt {
+  visibility: hidden;
+}
+
 /* For tables */
 
 table, th, td {
