@@ -17,10 +17,11 @@ app.config['SECRET_KEY'] = 'tempsecretkey'
 
 
 class Book:
-    def __init__(self, book_id, title, author, img_url):
+    def __init__(self, book_id, title, author, genre, img_url):
         self.book_id = book_id
         self.title = title
         self.author = author
+        self.genre = genre
         self.img_url = img_url
 
 
@@ -82,8 +83,6 @@ def check_member(lcn):
             card_number = row[0]
             if card_number == int(lcn):
                 return True
-            # min_card = row[0]
-            # max_card = row[1]
 
     except mysql.connector.Error as error:
         print("Failed {}".format(error))
@@ -92,8 +91,6 @@ def check_member(lcn):
         if connection.is_connected():
             connection.close()
 
-    # if min_card <= int(lcn) <= max_card:
-    #     return True
     return False
 
 
@@ -287,7 +284,7 @@ def book_search(**criteria):
             media_type = row[3]
             book_id = row[4]
             copy_id = row[5]
-            books.append(Book(int(book_id), title, author, ''))
+            books.append(Book(int(book_id), title, author, genre, ''))
             # books.append([title, author, genre, media_type, book_id, copy_id])
             # print('title: ' + title + ' author: ' + author + ' genre: ' + genre + ' type: ' + media_type)
 
@@ -430,10 +427,10 @@ def home():
         books = book_search(type='title', value=search_value)
     else:
         books = [
-            Book(1001, 'Da Vinci Code,The', 'Brown, Dan', ''),
-            Book(1002, 'Harry Potter and the Deathly Hallows', 'Rowling, J.K.', ''),
-            Book(1003, 'Fifty Shades of Grey', 'Larsson, Stieg', ''),
-            Book(1004, 'Time Traveler''s Wife,The', 'Niffenegger, Audrey', '')
+            Book(1001, 'Da Vinci Code,The', 'Brown, Dan', 'Young Adult Fiction', ''),
+            Book(1002, 'Harry Potter and the Deathly Hallows', 'Rowling, J.K.', 'Young Adult Fiction', ''),
+            Book(1003, 'Fifty Shades of Grey', 'Larsson, Stieg', 'Romance & Sagas', ''),
+            Book(1004, 'Time Traveler''s Wife,The', 'Niffenegger, Audrey', 'Romance & Sagas', '')
         ]
 
     for b in books[0:4]:
@@ -459,8 +456,8 @@ def fetch_next_set():
     #     books = book_records(type='title', value=search_value)
     # else:
     books = [
-        Book(1049, 'Memoirs of a Geisha', 'Golden, Arthur', ''),
-        Book(1056, 'Broker,The', 'Grisham, John', ''),
+        Book(1049, 'Memoirs of a Geisha', 'Golden, Arthur', 'Romance & Sagas', ''),
+        Book(1056, 'Broker,The', 'Grisham, John', 'Young Adult Fiction', ''),
     ]
     for b in books[4:8]:
         print(b.title)
