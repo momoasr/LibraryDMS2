@@ -189,12 +189,13 @@ def delete_bookcopy(copy_id):
             connection.close()
 
 
-def update_member(card_number, first_name, last_name,email_address, status):
+def update_member(card_number, first_name, last_name, email_address, status):
     try:
         connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
 
-        sql = "UPDATE member SET card_number = %s, first_name = %s, last_name = %s, email_address = %s, status = %s, WHERE card_number = %s"
-        val = (card_number, first_name, last_name,email_address, status)
+        sql = "UPDATE members SET first_name = %s, last_name = %s, email_address = %s, " \
+              "status = %s WHERE card_number = %s"
+        val = (card_number, first_name, last_name, email_address, status)
 
         cursor = connection.cursor()
         cursor.execute(sql, val)
