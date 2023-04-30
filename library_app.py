@@ -5,10 +5,11 @@ from functools import wraps
 import mysql.connector
 from flask import *
 import bcrypt
+from datetime import date
 
 host = 'localhost'
 user = 'root'
-db_password = 'MysqlDB1'
+db_password = 'Nicholas'
 schema = 'library'
 
 app = Flask(__name__)
@@ -17,10 +18,11 @@ app.config['SECRET_KEY'] = 'tempsecretkey'
 
 
 class Book:
-    def __init__(self, book_id, title, author, img_url):
+    def __init__(self, book_id, title, author, genre, img_url):
         self.book_id = book_id
         self.title = title
         self.author = author
+        self.genre = genre
         self.img_url = img_url
 
 
@@ -82,8 +84,6 @@ def check_member(lcn):
             card_number = row[0]
             if card_number == int(lcn):
                 return True
-            # min_card = row[0]
-            # max_card = row[1]
 
     except mysql.connector.Error as error:
         print("Failed {}".format(error))
@@ -92,8 +92,6 @@ def check_member(lcn):
         if connection.is_connected():
             connection.close()
 
-    # if min_card <= int(lcn) <= max_card:
-    #     return True
     return False
 
 
@@ -176,7 +174,6 @@ def delete_bookcopy(copy_id):
     try:
         connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
 
-        # delete the user's account from the database
         cursor = connection.cursor()
         cursor.execute("DELETE FROM bookcopy WHERE copy_id = %s", (copy_id,))
         connection.commit()
@@ -188,6 +185,74 @@ def delete_bookcopy(copy_id):
         if connection.is_connected():
             connection.close()
 
+
+def update_member(card_number, first_name, last_name, email_address, status):
+    try:
+        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+
+        sql = "UPDATE members SET first_name = %s, last_name = %s, email_address = %s, " \
+              "status = %s WHERE card_number = %s"
+        val = (first_name, last_name, email_address, status, card_number)
+
+        cursor = connection.cursor()
+        cursor.execute(sql, val)
+        connection.commit()
+        cursor.close()
+
+    except mysql.connector.Error as error:
+        print("Failed {}".format(error))
+
+    finally:
+        if connection.is_connected():
+            connection.close()
+
+
+def delete_member(copy_id):
+    try:
+        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+        # delete the user's account from the database
+        cursor = connection.cursor()
+        cursor.execute("DELETE FROM members WHERE card_number = %s", (copy_id,))
+        cursor.execute("DELETE FROM memberpass WHERE card_number = %s", (copy_id,))
+        connection.commit()
+
+    except mysql.connector.Error as error:
+        print("Failed {}".format(error))
+
+    finally:
+        if connection.is_connected():
+            connection.close()
+
+
+def rent_bookcopy(copy_id):
+    card_number, first_name, last_name, birth_date, email, status, copy_id, title = pull_records(session['card_number'])
+    if not copy_id:
+        return False
+    try:
+        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+
+        sql = "UPDATE bookcopy SET checkout_status = %s WHERE copy_id = %s"
+        val = ('rented', copy_id)
+        cursor = connection.cursor()
+        cursor.execute(sql, val)
+        connection.commit()
+        sql = "UPDATE checkout SET checkout_date = %s WHERE copy_id = %s"
+        val = (date.today(), copy_id)
+        cursor.execute(sql, val)
+        connection.commit()
+        sql = "UPDATE members SET copy_id = %s WHERE card_number = %s"
+        val = (copy_id, session['card_number'])
+        cursor.execute(sql, val)
+        connection.commit()
+        cursor.close()
+
+    except mysql.connector.Error as error:
+        print("Failed {}".format(error))
+
+    finally:
+        if connection.is_connected():
+            connection.close()
+    return True
 
 def pull_password(lcn):
     try:
@@ -234,12 +299,20 @@ def pull_password_admin(employee_id):
 
 
 def pull_records(lcn):
+    print(lcn)
     try:
         # connect to mysql database
         connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
 
         # the below line is the select statement to pull the members records based on the LCN
-        sql_select_query = "select * from members where card_number = " + str(lcn)
+        sql_select_query = "select m.card_number, m.first_name, m.last_name, m.birth_date, m.email_address, m.status, " \
+                           "m.copy_id, bk.title" \
+                           " from members m " \
+                           "left outer join bookcopy b " \
+                           "on m.copy_id = b.copy_id " \
+                           "left outer join book bk " \
+                           "on b.book_id = bk.book_id " \
+                           "where m.card_number = " + str(lcn)
         cursor = connection.cursor()
         # execute the select statement and fetch the results
         cursor.execute(sql_select_query)
@@ -254,6 +327,7 @@ def pull_records(lcn):
             email = row[4]
             status = row[5]
             copy_id = row[6]
+            title = row[7]
 
     except mysql.connector.Error as error:
         print("Failed {}".format(error))
@@ -262,7 +336,43 @@ def pull_records(lcn):
         if connection.is_connected():
             connection.close()
 
-    return card_number, first_name, last_name, birth_date, email, status, copy_id
+    return card_number, first_name, last_name, birth_date, email, status, copy_id, title
+
+
+# def book_search(**criteria):
+#     search_type = criteria['type']
+#     value = criteria['value']
+#     try:
+#         connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+#
+#         sql_select_query = "select distinct b.title, b.author, b.genre, bc.media_type, b.book_id, bc.copy_id " \
+#                            "from book b inner join bookcopy bc on b.book_id = bc.book_id " \
+#                            "where ucase(b." + search_type + ") like '%" + value + "%'"
+#
+#         cursor = connection.cursor()
+#         cursor.execute(sql_select_query)
+#         records = cursor.fetchall()
+#
+#         books = []
+#         for row in records:
+#             title = row[0]
+#             author = row[1]
+#             genre = row[2]
+#             media_type = row[3]
+#             book_id = row[4]
+#             copy_id = row[5]
+#             books.append(Book(int(book_id), title, author, genre, ''))
+#             # books.append([title, author, genre, media_type, book_id, copy_id])
+#             # print('title: ' + title + ' author: ' + author + ' genre: ' + genre + ' type: ' + media_type)
+#
+#     except mysql.connector.Error as error:
+#         print("Failed {}".format(error))
+#
+#     finally:
+#         if connection.is_connected():
+#             connection.close()
+#
+#     return books
 
 
 def book_records(**criteria):
@@ -273,7 +383,7 @@ def book_records(**criteria):
 
         sql_select_query = "select distinct b.title, b.author, b.genre, bc.media_type, b.book_id, bc.copy_id " \
                            "from book b inner join bookcopy bc on b.book_id = bc.book_id " \
-                           "where ucase(b." + search_type + ") like '%" + value + "%'"
+                           "where ucase(b." + search_type + ") like '%" + value + "%' and bc.checkout_status = 'available'"
 
         cursor = connection.cursor()
         cursor.execute(sql_select_query)
@@ -368,9 +478,9 @@ def report_allcopies():
 
 def validate(lcn, first, last, email_entered):
     if check_member(lcn):
-        card_number, first_name, last_name, dob, email, status, copy_id = pull_records(lcn)
-        print(card_number, first_name, last_name, email)
-        print(first, last, email_entered)
+        card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(lcn)
+        # print(card_number, first_name, last_name, email)
+        # print(first, last, email_entered)
         if (first == first_name) and (last == last_name) and (email_entered == email):  # and dob_entered == dob:
             return True
     return False
@@ -390,20 +500,24 @@ def authenticate_PW(password):
 def home():
     search_value = request.args.get('search')
     print(f'search: {search_value}')
-    books = [
-        Book(1001, 'Da Vinci Code,The', 'Brown, Dan', ''),
-        Book(1002, 'Harry Potter and the Deathly Hallows', 'Rowling, J.K.', ''),
-        Book(1003, 'Fifty Shades of Grey', 'Larsson, Stieg', ''),
-        Book(1004, 'Time Traveler''s Wife,The', 'Niffenegger, Audrey', '')
-    ]
+    if search_value:
+        books = book_search(type='title', value=search_value)
+    else:
+        books = [
+            Book(1001, 'Da Vinci Code,The', 'Brown, Dan', 'Young Adult Fiction', ''),
+            Book(1002, 'Harry Potter and the Deathly Hallows', 'Rowling, J.K.', 'Young Adult Fiction', ''),
+            Book(1003, 'Fifty Shades of Grey', 'Larsson, Stieg', 'Romance & Sagas', ''),
+            Book(1004, 'Time Traveler''s Wife,The', 'Niffenegger, Audrey', 'Romance & Sagas', '')
+        ]
 
-    for b in books:
+    for b in books[0:4]:
         img_path = url_for('static', filename='images/')
         b.img_url = f'{img_path}{b.book_id}.png'
 
+    temp = books[0: 4]
     cars = [
-        Carousel(books, 'Romance & Sagas'),
-        Carousel(books, 'Young Adult Fiction')]
+        Carousel(temp, 'Romance & Sagas'),
+        Carousel(temp, 'Young Adult Fiction')]
 
     return render_template('home.html', carousels=cars)
 
@@ -414,14 +528,20 @@ def fetch_next_set():
     print(f'category: {category}')
     page = request.args.get('page')
     print(f'search: {page}')
-
+    # search_value = request.args.get('search')
+    # if search_value:
+    #     books = book_records(type='title', value=search_value)
+    # else:
     books = [
-        Book(1049, 'Memoirs of a Geisha', 'Golden, Arthur', ''),
-        Book(1056, 'Broker,The', 'Grisham, John', ''),
+        Book(1049, 'Memoirs of a Geisha', 'Golden, Arthur', 'Romance & Sagas', ''),
+        Book(1056, 'Broker,The', 'Grisham, John', 'Young Adult Fiction', ''),
     ]
-    for b in books:
+    for b in books[4:8]:
+        print(b.title)
         img_path = url_for('static', filename='images/')
         b.img_url = f'{img_path}{b.book_id}.png'
+
+    # temp = books[4:8]
 
     return render_template('book_by_category.html', books=books)
 
@@ -490,8 +610,9 @@ def registerMbr():
                     if connection.is_connected():
                         connection.close()
 
-                card_number, first_name, last_name, dob, email, status, copy_id = pull_records(new_card)
-                return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
+                card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(new_card)
+                return render_template("welcome.html", card_number=card_number, first_name=first_name,
+                                       last_name=last_name,
                                        email=email, dob=dob)
         message = 'Passwords do not match!'
         return render_template('register.html', message=message)
@@ -519,6 +640,42 @@ def login():
 @app.route('/about', methods=['GET', 'POST'])
 def about():
     return render_template('about.html')
+
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    return render_template('contact.html')
+
+@app.route('/account', methods=['GET', 'POST'])
+def account():
+    if request.method == 'POST':
+        if request.form['cardnumber']:
+            lcn = request.form['cardnumber']
+            first_name = request.form['firstname']
+            last_name = request.form['lastname']
+            email = request.form['email']
+            dob = request.form['dob']
+
+            try:
+                        connection = mysql.connector.connect(host=host, database=schema, user=user,
+                                                             password=db_password)
+
+                        sql = "UPDATE members SET first_name = %s, last_name = %s, birth_date = %s, email_address = %s WHERE card_number = %s"
+                        val = (first_name, last_name, dob, email, lcn)
+
+                        cursor = connection.cursor()
+                        cursor.execute(sql, val)
+                        connection.commit()
+                        cursor.close()
+
+            except mysql.connector.Error as error:
+                        print("Failed {}".format(error))
+
+            finally:
+                    if connection.is_connected():
+                            connection.close()
+
+    return render_template('account.html')
+
 
 
 @app.route('/forgotPassword', methods=['GET', 'POST'])
@@ -604,6 +761,14 @@ def admin():
             delete_bookcopy(copy_id)
             message = 'Copy Successfully Deleted'
             return render_template('admin.html', message=message)
+        if 'update2' in request.form:
+            card_number = request.form['update2']
+            return render_template('memberedit.html', card_number=card_number)
+        elif 'delete2' in request.form:
+            card_number = request.form['delete2']
+            delete_member(card_number)
+            message = 'Member Successfully Deleted'
+            return render_template('admin.html', message=message)
         elif 'mbr_report' in request.form:
             member_list = member_records(type='first_name', value='')
             return render_template('admin.html', member_list=member_list)
@@ -636,20 +801,48 @@ def book_edit():
     return render_template('bookedit.html')
 
 
+@app.route('/member_edit', methods=['GET', 'POST'])
+@authorized_admin
+def member_edit():
+    if request.method == 'POST':
+        if request.form['card_number']:
+            if check_member(request.form['card_number']):
+                card_number = request.form['card_number']
+                first_name = request.form['first_name']
+                last_name = request.form['last_name']
+                email_address = request.form['email_address']
+                status = request.form['status']
+                update_member(card_number, first_name, last_name, email_address, status)
+                message = 'Member has been updated successfully!'
+                return render_template('memberedit.html', message=message)
+            message = 'The Member ID entered does not exist!'
+            return render_template('memberedit.html', message=message)
+        message = 'Please enter member ID!'
+        return render_template('memberedit.html', message=message)
+    return render_template('memberedit.html')
+
+
 @app.route('/members', methods=['GET', 'POST'])
 @authorized
 def members():
     if request.method == 'POST':
-        if request.form['search'] and request.form['criteria']:
-            title_input = request.form['search']
-            criteria_type = request.form['criteria']
-            book_list = book_records(type=criteria_type, value=title_input)
-            card_number, first_name, last_name, dob, email, status, copy_id = pull_records(session['card_number'])
+        if request.form['value'] and request.form['criteria']:
+            search_value = request.form['value']
+            drop_down = request.form['criteria']
+            book_list = book_records(type=drop_down, value=search_value)
+            card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(session['card_number'])
             return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
-                                   email=email, dob=dob, book_list=book_list)
-    card_number, first_name, last_name, dob, email, status, copy_id = pull_records(session['card_number'])
+                                   email=email, dob=dob, book_list=book_list, title=title)
+        if 'rent' in request.form:
+            copy_id = request.form['rent']
+            rent_bookcopy(copy_id)
+            card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(
+                session['card_number'])
+            return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
+                                   email=email, dob=dob, title=title)
+    card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(session['card_number'])
     return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
-                           email=email, dob=dob)
+                           email=email, dob=dob, title=title)
 
 
 @app.route('/delete_account', methods=['GET', 'POST'])

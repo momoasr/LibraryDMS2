@@ -88,6 +88,12 @@
         <td>{{member}}&nbsp&nbsp&nbsp&nbsp</td>
 
         {% endfor %}
+        <td>
+                <button type="submit" name="update2" value={{row[0]}}>Update</button>
+            </td>
+            <td>
+                <button type="submit" name="delete2" value={{row[0]}}>Delete</button>
+            </td>
     </tr>
 
   {% endfor %}

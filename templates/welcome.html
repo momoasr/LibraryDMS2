@@ -41,51 +41,91 @@
 
     <div class="container">
         <h1>Welcome {{first_name}}</h1>
-        <h3>Your Libary Card Number is: </h3><p><strong>{{card_number}}</strong></p>
+        <h3>Your Libary Card Number is: <u>{{card_number}}</u></h3>
         <pre></pre>
         
         <div>
           <ul>
         <h3>Books currently being rented:</h3>
-            <li>Title of Book that's been rented</li>
+            <li>{{title}}</li>
           </ul>
         </div>
         <pre></pre>
 
         <button type='button' onclick="showText()">Account details</button>
         <button>Set-up Return</button>
+        
         <div id='hidden' style='display: none'>
-          <ul>
-            <li>Name: {{first_name}} {{last_name}}</li>
-            <li>Date of Birth: {{dob}}</li>
-            <li>Email Address: {{email}}</li>
-          </ul>
+          <div class="account">
+
+            <div class="head-container">
+            {{first_name}} {{last_name}}
+            <label for="name">Account Holder</label>
+            </div>
+            <div class="card-container">
+                <label for="cardnumber">Libary Card Number: {{card_number}}</label>
+            </div>
+            <div class="body-container">
+                <label for="">Date of Birth:</label>
+                {{dob}}
+                <pre></pre>
+                <label>Email Address:</label>
+                {{email}}
+                <pre></pre>
+                <a href="{{url_for('account')}}">Change Account Info</a>
+                <pre></pre>
+                <a href="{{url_for('forgotPassword')}}">Forgot Password</a>
+                <pre></pre>
+                <form method="post" action="{{ url_for('delete_account') }}">
+                  <button>Request Account Deletion</button>
+                </form>
+            </div>
+        </div>
           <div>
-        <a href="{{url_for('forgotPassword')}}">Forgot Password</a>
+        
     </div>
-          <form method="post" action="{{ url_for('delete_account') }}">
-            <button>Request Account Deletion</button>
-            </form>
+          
 
         </div>
-        
-
-        <!-- <h3>First Name: </h3><p>{{first_name}}</p>
-        <h3>Last Name: </h3><p>{{last_name}}</p>
-        <h3> Email Address: </h3><p>{{email}}</p>
-        <h3>DOB: </h3><p>{{dob}}</p> -->
     </div>
+<pre></pre>
+<form action="/members" method="POST">
+                <label>Search By:</label>
 
-<!--    <div>-->
-<!--        <ul>-->
-<!--            {% for row in book_list %}-->
-<!--              {% for book in row %}-->
-<!--            <li>{{ book }}&nbsp</li>-->
-<!--              {% endfor %}-->
-<!--              </br>-->
-<!--            {% endfor %}-->
-<!--        </ul>-->
-<!--    </div>-->
+<select name="criteria" id="criteria">
+  <option value="title">Title</option>
+  <option value="author">Author</option>
+  <option value="genre">Genre</option>
+</select>
 
+
+        <pre></pre>
+        <Input type="search" name="value" placeholder="Item lookup"></Input>
+        <button>Browse</button>
+        <table>
+  <thead>
+    <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Genre</th>
+        <th>Media Type</th>
+        <th>Book ID</th>
+        <th>Copy ID</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for row in book_list %}
+    <tr>
+        {% for book in row %}
+        <td>{{book}}&nbsp&nbsp&nbsp&nbsp</td>
+        {% endfor %}
+        <td>
+            <button type="submit" name="rent" value={{row[5]}}>Rent</button>
+        </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</form>
 </body>  
 {% endblock %}
