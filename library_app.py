@@ -9,7 +9,7 @@ from datetime import date
 
 host = 'localhost'
 user = 'root'
-db_password = 'Nicholas'
+db_password = 'Y&suMokonzi@2023'
 schema = 'library'
 
 app = Flask(__name__)
@@ -18,16 +18,15 @@ app.config['SECRET_KEY'] = 'tempsecretkey'
 
 
 class Book:
-    def __init__(self, book_id, title, author, genre, img_url):
+    def __init__(self, book_id, title, author, img_url):
         self.book_id = book_id
         self.title = title
         self.author = author
-        self.genre = genre
         self.img_url = img_url
 
 
 class Carousel:
-    def __init__(self, books, category):
+    def __init__(self, books, category, next_set):
         self.books = books
         self.category = category
 
@@ -73,7 +72,8 @@ def check_member(lcn):
     max_card = 0
     try:
         # connect to mysql database
-        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+        connection = mysql.connector.connect(
+            host=host, database=schema, user=user, password=db_password)
         # min(card_number), max(card_number)
         sql_select_query = "select card_number from members"
         cursor = connection.cursor()
@@ -100,7 +100,8 @@ def check_admin(employee_id):
     max_card = 0
     try:
         # connect to mysql database
-        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+        connection = mysql.connector.connect(
+            host=host, database=schema, user=user, password=db_password)
         # min(card_number), max(card_number)
         sql_select_query = "select admin_id from admin"
         cursor = connection.cursor()
@@ -128,7 +129,8 @@ def check_admin(employee_id):
 
 def check_book(book_id):
     try:
-        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+        connection = mysql.connector.connect(
+            host=host, database=schema, user=user, password=db_password)
 
         sql_select_query = "select book_id from book"
         cursor = connection.cursor()
@@ -152,7 +154,8 @@ def check_book(book_id):
 
 def update_book(book_id, title, author, genre):
     try:
-        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+        connection = mysql.connector.connect(
+            host=host, database=schema, user=user, password=db_password)
 
         sql = "UPDATE book SET title = %s, author = %s, genre = %s WHERE book_id = %s"
         val = (title, author, genre, book_id)
@@ -172,7 +175,8 @@ def update_book(book_id, title, author, genre):
 
 def delete_bookcopy(copy_id):
     try:
-        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+        connection = mysql.connector.connect(
+            host=host, database=schema, user=user, password=db_password)
 
         cursor = connection.cursor()
         cursor.execute("DELETE FROM bookcopy WHERE copy_id = %s", (copy_id,))
@@ -188,7 +192,8 @@ def delete_bookcopy(copy_id):
 
 def update_member(card_number, first_name, last_name, email_address, status):
     try:
-        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+        connection = mysql.connector.connect(
+            host=host, database=schema, user=user, password=db_password)
 
         sql = "UPDATE members SET first_name = %s, last_name = %s, email_address = %s, " \
               "status = %s WHERE card_number = %s"
@@ -209,11 +214,14 @@ def update_member(card_number, first_name, last_name, email_address, status):
 
 def delete_member(copy_id):
     try:
-        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+        connection = mysql.connector.connect(
+            host=host, database=schema, user=user, password=db_password)
         # delete the user's account from the database
         cursor = connection.cursor()
-        cursor.execute("DELETE FROM members WHERE card_number = %s", (copy_id,))
-        cursor.execute("DELETE FROM memberpass WHERE card_number = %s", (copy_id,))
+        cursor.execute(
+            "DELETE FROM members WHERE card_number = %s", (copy_id,))
+        cursor.execute(
+            "DELETE FROM memberpass WHERE card_number = %s", (copy_id,))
         connection.commit()
 
     except mysql.connector.Error as error:
@@ -225,11 +233,13 @@ def delete_member(copy_id):
 
 
 def rent_bookcopy(copy_id):
-    card_number, first_name, last_name, birth_date, email, status, copy_id, title = pull_records(session['card_number'])
+    card_number, first_name, last_name, birth_date, email, status, copy_id, title = pull_records(
+        session['card_number'])
     if not copy_id:
         return False
     try:
-        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+        connection = mysql.connector.connect(
+            host=host, database=schema, user=user, password=db_password)
 
         sql = "UPDATE bookcopy SET checkout_status = %s WHERE copy_id = %s"
         val = ('rented', copy_id)
@@ -254,12 +264,15 @@ def rent_bookcopy(copy_id):
             connection.close()
     return True
 
+
 def pull_password(lcn):
     try:
-        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+        connection = mysql.connector.connect(
+            host=host, database=schema, user=user, password=db_password)
 
         # the below line is the select statement to pull the members records based on the LCN
-        sql_select_query = "select hashedpw from memberpass where card_number = " + str(lcn)
+        sql_select_query = "select hashedpw from memberpass where card_number = " + \
+            str(lcn)
         cursor = connection.cursor()
         cursor.execute(sql_select_query)
         records = cursor.fetchall()
@@ -278,10 +291,12 @@ def pull_password(lcn):
 
 def pull_password_admin(employee_id):
     try:
-        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+        connection = mysql.connector.connect(
+            host=host, database=schema, user=user, password=db_password)
 
         # the below line is the select statement to pull the members records based on the LCN
-        sql_select_query = "select hashedpw from adminpass where admin_id = " + str(employee_id)
+        sql_select_query = "select hashedpw from adminpass where admin_id = " + \
+            str(employee_id)
         cursor = connection.cursor()
         cursor.execute(sql_select_query)
         records = cursor.fetchall()
@@ -302,7 +317,8 @@ def pull_records(lcn):
     print(lcn)
     try:
         # connect to mysql database
-        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+        connection = mysql.connector.connect(
+            host=host, database=schema, user=user, password=db_password)
 
         # the below line is the select statement to pull the members records based on the LCN
         sql_select_query = "select m.card_number, m.first_name, m.last_name, m.birth_date, m.email_address, m.status, " \
@@ -379,11 +395,13 @@ def book_records(**criteria):
     search_type = criteria['type']
     value = criteria['value']
     try:
-        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+        connection = mysql.connector.connect(
+            host=host, database=schema, user=user, password=db_password)
 
         sql_select_query = "select distinct b.title, b.author, b.genre, bc.media_type, b.book_id, bc.copy_id " \
                            "from book b inner join bookcopy bc on b.book_id = bc.book_id " \
-                           "where ucase(b." + search_type + ") like '%" + value + "%' and bc.checkout_status = 'available'"
+                           "where ucase(b." + search_type + ") like '%" + \
+            value + "%' and bc.checkout_status = 'available'"
 
         cursor = connection.cursor()
         cursor.execute(sql_select_query)
@@ -414,10 +432,12 @@ def member_records(**criteria):
     search_type = criteria['type']
     value = criteria['value']
     try:
-        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+        connection = mysql.connector.connect(
+            host=host, database=schema, user=user, password=db_password)
 
         sql_select_query = "select * from members " \
-                           "where ucase(" + search_type + ") like '%" + value + "%'"
+                           "where ucase(" + search_type + \
+            ") like '%" + value + "%'"
 
         cursor = connection.cursor()
         cursor.execute(sql_select_query)
@@ -432,7 +452,8 @@ def member_records(**criteria):
             email = row[4]
             status = row[5]
             copy_id = row[6]
-            _members.append([card_number, first_name, last_name, birth_date, email, status, copy_id])
+            _members.append([card_number, first_name, last_name,
+                            birth_date, email, status, copy_id])
             # print('title: ' + title + ' author: ' + author + ' genre: ' + genre + ' type: ' + media_type)
 
     except mysql.connector.Error as error:
@@ -447,7 +468,8 @@ def member_records(**criteria):
 
 def report_allcopies():
     try:
-        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+        connection = mysql.connector.connect(
+            host=host, database=schema, user=user, password=db_password)
 
         sql_select_query = "select distinct bc.copy_id, b.title, b.author, b.genre, bc.media_type from book b " \
                            "inner join bookcopy bc on b.book_id = bc.book_id"
@@ -478,16 +500,19 @@ def report_allcopies():
 
 def validate(lcn, first, last, email_entered):
     if check_member(lcn):
-        card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(lcn)
+        card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(
+            lcn)
         # print(card_number, first_name, last_name, email)
         # print(first, last, email_entered)
-        if (first == first_name) and (last == last_name) and (email_entered == email):  # and dob_entered == dob:
+        # and dob_entered == dob:
+        if (first == first_name) and (last == last_name) and (email_entered == email):
             return True
     return False
 
 
 def authenticate_PW(password):
-    common_pws = ('password', 'password123', 'password1', '12345', '12345678', '111111')
+    common_pws = ('password', 'password123', 'password1',
+                  '12345', '12345678', '111111')
     for pw in common_pws:
         if password == pw:
             return False
@@ -495,53 +520,90 @@ def authenticate_PW(password):
         return False
     return True
 
+# HELPERS
+
+
+def find(arr, cat):
+    for x in arr:
+        if x.category == cat:
+            return x
+# END HELPERS
+
 
 @app.route('/', methods=['GET'])
 def home():
     search_value = request.args.get('search')
-    print(f'search: {search_value}')
-    if search_value:
-        books = book_search(type='title', value=search_value)
-    else:
-        books = [
-            Book(1001, 'Da Vinci Code,The', 'Brown, Dan', 'Young Adult Fiction', ''),
-            Book(1002, 'Harry Potter and the Deathly Hallows', 'Rowling, J.K.', 'Young Adult Fiction', ''),
-            Book(1003, 'Fifty Shades of Grey', 'Larsson, Stieg', 'Romance & Sagas', ''),
-            Book(1004, 'Time Traveler''s Wife,The', 'Niffenegger, Audrey', 'Romance & Sagas', '')
-        ]
+    search_value = '' if search_value is None else search_value
+    try:
+        connection = mysql.connector.connect(
+            host=host, database=schema, user=user, password=db_password)
 
-    for b in books[0:4]:
-        img_path = url_for('static', filename='images/')
-        b.img_url = f'{img_path}{b.book_id}.png'
+        cars = []
 
-    temp = books[0: 4]
-    cars = [
-        Carousel(temp, 'Romance & Sagas'),
-        Carousel(temp, 'Young Adult Fiction')]
+        cursor = connection.cursor()
+        cursor.callproc('getBooksByAllGenres', [search_value])
 
-    return render_template('home.html', carousels=cars)
+        for result in cursor.stored_results():
+            allResults = result.fetchall()
+            for i, row in enumerate(allResults):
+                img_path = url_for('static', filename='images/')
+                img_url = f'{img_path}{row[0]}.png'
+                bItem = Book(row[0], row[1], row[2], img_url)
+
+                if len(cars):
+                    local_cat = find(cars, row[3])
+                    if local_cat:
+                        local_cat.books.append(bItem)
+                    else:
+                        bList = [bItem]
+                        cars.append(Carousel(bList, row[3], False))
+                else:
+                    bList = [bItem]
+                    cars.append(Carousel(bList, row[3], False))
+
+        for car in cars:
+            if len(car.books) < 4:
+                car.next_set = True
+    except mysql.connector.Error as error:
+        print("Failed {}".format(error))
+
+    finally:
+        if connection.is_connected():
+            connection.close()
+
+    return render_template('home.html', carousels=cars, search_value=search_value)
 
 
 @app.route('/fetch-next-set', methods=['GET'])
 def fetch_next_set():
     category = request.args.get('category')
-    print(f'category: {category}')
     page = request.args.get('page')
-    print(f'search: {page}')
-    # search_value = request.args.get('search')
-    # if search_value:
-    #     books = book_records(type='title', value=search_value)
-    # else:
-    books = [
-        Book(1049, 'Memoirs of a Geisha', 'Golden, Arthur', 'Romance & Sagas', ''),
-        Book(1056, 'Broker,The', 'Grisham, John', 'Young Adult Fiction', ''),
-    ]
-    for b in books[4:8]:
-        print(b.title)
-        img_path = url_for('static', filename='images/')
-        b.img_url = f'{img_path}{b.book_id}.png'
+    searchBox = request.args.get("searchBox")
+    print(f'category: {category}, searchBox: {searchBox}, page: {page}')
 
-    # temp = books[4:8]
+    try:
+        connection = mysql.connector.connect(
+            host=host, database=schema, user=user, password=db_password)
+
+        books = []
+
+        cursor = connection.cursor()
+        cursor.callproc('getBookByGenre', [category, page, searchBox])
+
+        for result in cursor.stored_results():
+            allResults = result.fetchall()
+            for i, row in enumerate(allResults):
+                img_path = url_for('static', filename='images/')
+                img_url = f'{img_path}{row[0]}.png'
+                bItem = Book(row[0], row[1], row[2], img_url)
+                books.append(bItem)
+
+    except mysql.connector.Error as error:
+        print("Failed {}".format(error))
+
+    finally:
+        if connection.is_connected():
+            connection.close()
 
     return render_template('book_by_category.html', books=books)
 
@@ -569,7 +631,8 @@ def registerMbr():
                 hashedpwd = hash_pw(password1)
 
                 try:
-                    connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+                    connection = mysql.connector.connect(
+                        host=host, database=schema, user=user, password=db_password)
 
                     # pull the last card number from the members table
                     max_card_number = "select max(card_number) from members"
@@ -591,7 +654,8 @@ def registerMbr():
                     insert_pw = """INSERT INTO memberpass (card_number, hashedpw)
                                                     VALUES (%s, %s)"""
 
-                    insert_record = (new_card, first_name, last_name, dob, email)
+                    insert_record = (new_card, first_name,
+                                     last_name, dob, email)
                     insert_record2 = (new_card, hashedpwd)
 
                     cursor = connection.cursor()
@@ -610,7 +674,8 @@ def registerMbr():
                     if connection.is_connected():
                         connection.close()
 
-                card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(new_card)
+                card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(
+                    new_card)
                 return render_template("welcome.html", card_number=card_number, first_name=first_name,
                                        last_name=last_name,
                                        email=email, dob=dob)
@@ -641,9 +706,11 @@ def login():
 def about():
     return render_template('about.html')
 
+
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
     return render_template('contact.html')
+
 
 @app.route('/account', methods=['GET', 'POST'])
 def account():
@@ -656,26 +723,25 @@ def account():
             dob = request.form['dob']
 
             try:
-                        connection = mysql.connector.connect(host=host, database=schema, user=user,
-                                                             password=db_password)
+                connection = mysql.connector.connect(host=host, database=schema, user=user,
+                                                     password=db_password)
 
-                        sql = "UPDATE members SET first_name = %s, last_name = %s, birth_date = %s, email_address = %s WHERE card_number = %s"
-                        val = (first_name, last_name, dob, email, lcn)
+                sql = "UPDATE members SET first_name = %s, last_name = %s, birth_date = %s, email_address = %s WHERE card_number = %s"
+                val = (first_name, last_name, dob, email, lcn)
 
-                        cursor = connection.cursor()
-                        cursor.execute(sql, val)
-                        connection.commit()
-                        cursor.close()
+                cursor = connection.cursor()
+                cursor.execute(sql, val)
+                connection.commit()
+                cursor.close()
 
             except mysql.connector.Error as error:
-                        print("Failed {}".format(error))
+                print("Failed {}".format(error))
 
             finally:
-                    if connection.is_connected():
-                            connection.close()
+                if connection.is_connected():
+                    connection.close()
 
     return render_template('account.html')
-
 
 
 @app.route('/forgotPassword', methods=['GET', 'POST'])
@@ -812,7 +878,8 @@ def member_edit():
                 last_name = request.form['last_name']
                 email_address = request.form['email_address']
                 status = request.form['status']
-                update_member(card_number, first_name, last_name, email_address, status)
+                update_member(card_number, first_name,
+                              last_name, email_address, status)
                 message = 'Member has been updated successfully!'
                 return render_template('memberedit.html', message=message)
             message = 'The Member ID entered does not exist!'
@@ -830,7 +897,8 @@ def members():
             search_value = request.form['value']
             drop_down = request.form['criteria']
             book_list = book_records(type=drop_down, value=search_value)
-            card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(session['card_number'])
+            card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(
+                session['card_number'])
             return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
                                    email=email, dob=dob, book_list=book_list, title=title)
         if 'rent' in request.form:
@@ -840,7 +908,8 @@ def members():
                 session['card_number'])
             return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
                                    email=email, dob=dob, title=title)
-    card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(session['card_number'])
+    card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(
+        session['card_number'])
     return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
                            email=email, dob=dob, title=title)
 
@@ -851,12 +920,15 @@ def delete_account():
     # card_number = request.args.get('card_num', None)
     # print(card_number)
     try:
-        connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
+        connection = mysql.connector.connect(
+            host=host, database=schema, user=user, password=db_password)
 
         # delete the user's account from the database
         cursor = connection.cursor()
-        cursor.execute("DELETE FROM members WHERE card_number = %s", (card_number,))
-        cursor.execute("DELETE FROM memberpass WHERE card_number = %s", (card_number,))
+        cursor.execute(
+            "DELETE FROM members WHERE card_number = %s", (card_number,))
+        cursor.execute(
+            "DELETE FROM memberpass WHERE card_number = %s", (card_number,))
         connection.commit()
 
     except mysql.connector.Error as error:

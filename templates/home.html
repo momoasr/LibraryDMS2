@@ -5,16 +5,12 @@
     <div style="width: 50rem;margin: 3rem auto 0 auto" class="col-12">
         <form action="/" method="GET" class="d-flex" role="search">
             <div class="input-group mb-3">
-                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                    aria-expanded="false">All</button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">All</a></li>
-                    <li><a class="dropdown-item" href="#">Title</a></li>
-                    <li><a class="dropdown-item" href="#">Author</a></li>
-                    <li><a class="dropdown-item" href="#">Genre</a></li>
-                    <li><a class="dropdown-item" href="#">ID</a></li>
-                </ul>
-                <input type="text" class="form-control" name="search" placeholder="Search...">
+                {% if search_value %}
+                <input id="search-box" type="text" value="{{ search_value }}" class="form-control" name="search"
+                    placeholder="Search...">
+                {% else %}
+                <input id="search-box" type="text" class="form-control" name="search" placeholder="Search...">
+                {% endif %}
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </div>
         </form>
@@ -26,8 +22,8 @@
         <h4>{{ car.category }}</h4>
     </div>
     <div class="col-12 d-flex p-3">
-        <div class=carousel-arrow-wrapper"">
-            <i class="bi bi-chevron-left carousel-arrow pointer" data-dir="left"></i>
+        <div class="carousel-arrow-wrapper">
+            <i class="bi bi-chevron-left carousel-arrow pointer hide-elt" data-dir="left"></i>
         </div>
         <div class="carousel-image-block d-flex">
             {%for book in car.books%}
@@ -43,13 +39,14 @@
         </div>
         <div class="carousel-arrow-wrapper">
             <i data-category="{{car.category}}" data-page="1" data-dir="right"
-            class="bi bi-chevron-right carousel-arrow pointer"></i>
+                class="bi bi-chevron-right carousel-arrow pointer {{ 'hide-elt' if car.next_set }}"></i>
         </div>
     </div>
 </div>
 {%endfor%}
 <script>
     window.onload = function () {
+        const searchBox = document.getElementById("search-box").value;
         const arrows = document.getElementsByClassName("carousel-arrow");
         for (let i = 0; i < arrows.length; i++) {
             const e = arrows[i];
@@ -59,29 +56,30 @@
                 const dir = e.dataset.dir;
                 const qStr = new URLSearchParams({
                     category,
-                    page
+                    page,
+                    searchBox: searchBox
                 })
-                fetch("/fetch-next-set?" + qStr,{
+                fetch("/fetch-next-set?" + qStr, {
                     method: "GET"
                 })
-                .then(resp => resp.text())
-                .then(resp => {
-                    const idStr = `[data-id="${category}"]`;
-                    const div = document.querySelector(idStr);
-                    if(div){
-                        const imgBlocks = div.getElementsByClassName('carousel-image-block');
-                        if(imgBlocks.length){
-                            imgBlocks[0].innerHTML = resp;
+                    .then(resp => resp.text())
+                    .then(resp => {
+                        const idStr = `[data-id="${category}"]`;
+                        const div = document.querySelector(idStr);
+                        if (div) {
+                            const imgBlocks = div.getElementsByClassName('carousel-image-block');
+                            if (imgBlocks.length) {
+                                imgBlocks[0].innerHTML = resp;
 
-                            if(dir == 'left'){
-                            }
-                            else {
-                                const nexPageValue = (+page) + 1;
-                                e.setAttribute('data-page', nexPageValue);
+                                if (dir == 'left') {
+                                }
+                                else {
+                                    const nexPageValue = (+page) + 1;
+                                    e.setAttribute('data-page', nexPageValue);
+                                }
                             }
                         }
-                    }
-                })
+                    })
             });
         }
     }
