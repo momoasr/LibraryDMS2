@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Registration{% endblock %}
+{% block content %}
+<div class="account">
+<form action="account" method="POST">
+    
+   
+    <div class="body-container">
+
+        <div>
+            <p> 
+                Re-enter your account information with any additonal changes
+                That must be updated. Use your libary card number to confirm.
+            </p>
+        </div>
+
+        <label>first name</label>
+        <input name="firstname" type="text" placeholder="Change First Name">
+        <label>last name</label>
+        <input name="lastname" type="text" placeholder="Change Last Name">
+
+        <label >Date of Birth:</label>
+        <input name="dob" type="date" placeholder="Change Date">
+        <pre></pre>
+        <label>Email Address:</label>
+        <input name="email" type="email" placeholder="Change Email">
+        <pre></pre>
+        <label>Validate your Libary Card Number</label>
+        <input name="cardnumber" type="text">
+        <button type="submit">Edit</button>
+        
+    </div>
+</form>
+    
+</div>
+{% endblock %}
+

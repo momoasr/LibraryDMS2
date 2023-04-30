@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+    <pre></pre>
+    <h1>Contact Website Support</h1>
+    <head>
+    </head>
+    <body>
+        <div class="contact_form">
+            <form>
+                <div class="inputs">
+                <label>Employe ID</label>
+                <input type="text" placeholder="Employe ID" style="text-align: center;">
+                <pre></pre>
+
+                <label>Last Name</label>
+                <input type="text" placeholder="Last Name" style="text-align: center;">
+                <pre></pre>
+
+            </div>
+            <pre></pre>
+            <div class="issues">
+
+                 <label>What Is Your Issue?</label>
+                 <select id="issues">
+                    <option>Forgot Password</option>
+                    <option>Issue With Member Profile </option>
+                    <option>Issue With Inventory</option>
+                    <option>Website Functionality</option>
+                    <option>General Concerns</option>
+                 </select>
+                 <pre></pre>
+
+                <textarea rows="7" placeholder="Please descibe your issue... (optional)"></textarea>
+                 <pre></pre>
+                <label>Contact Email</label>
+                <input type="email" placeholder="Email" style="text-align: center;">
+
+               
+            </div>
+                <button>Send</button>
+            </form>
+        </div>
+    </body>
+
+
+{% endblock %}

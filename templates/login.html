@@ -1,21 +1,45 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
 {% block content %}
+
+<script>
+
+const username = document.getElementById('username')
+const password = document.getElementById('password')
+const form = document.getElementById('form')
+const errorElement = document.getElementById('error')
+
+form.addEventListener('primary', (e) => {
+    let messages =[]
+    if (username.value === '' || username.value == null) {
+        messages.push('required')
+    }
+
+    if (messages.length > 0) {
+        e.preventDefault()
+        errorElement.innerText = messages.join(', ')
+    }
+})
+
+</script>
+
 <h1>Login From</h1>
-<form action="/login" method="post">
+<div id="error"></div>
+<form action="/login" method= "post">
 
     <p>{{message}}</p>
     <pre></pre>
 
     <div class="form-grp">
+        <div id="error"></div>
         <label for="username">Card Number</label>
-        <input type="text" name="cardnumber" class="form-control">
+        <input id="username" type="text" name="cardnumber" class="form-control">
     </div>
     <pre></pre>
 
     <div class="form-grp">
         <label for="password">Password</label>
-        <input required type="password" name="password" class="form-control" minlength="8">
+        <input type="password" name="password" class="form-control">
     </div>
     <pre></pre>
 
