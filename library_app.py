@@ -607,12 +607,13 @@ def confirm_checkout():
     book_list = book_records(type='book_id', value=book_id)
     card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(session['card_number'])
     if copy_id:
-        if book_list[0][6] == 'rented':
-            # redirect to the check out with a meaningful error message for the user
-            message = 'This book is not available.'
-            return redirect(url_for('checkout', book_id = book_id, message=message))
         message = 'You have not returned the book in your possession.'
         return redirect(url_for('checkout', book_id=book_id, message=message))
+    if book_list[0][6] == 'rented':
+        # redirect to the check out with a meaningful error message for the user
+        message = 'This book is not available.'
+        return redirect(url_for('checkout', book_id = book_id, message=message))
+
 
     title = book_list[0][0]
     rent_bookcopy(book_id)
