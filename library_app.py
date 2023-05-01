@@ -236,7 +236,6 @@ def delete_member(copy_id):
 def rent_bookcopy(copy_id):
     card_number, first_name, last_name, birth_date, email, status, mbr_copy_id, title = pull_records(
         session['card_number'])
-    print(card_number, first_name, last_name, birth_date, email, status, mbr_copy_id, title)
     if mbr_copy_id:
         return False
     try:
@@ -606,17 +605,8 @@ def confirm_checkout():
     book_id = request.form['book_id']
     print(f'book_id: {book_id}')
     book_list = book_records(type='book_id', value=book_id)
-    # TO DO: do the checkout here...
-    # if the checkout fails,
-    # if not session['card_number']:
-    #     message = 'Please log in before renting a book.'
-    #     return render_template('login.html', message=message)
-    #
-    # else:
     card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(session['card_number'])
-    # print(card_number, first_name, last_name, dob, email, status, copy_id, title)
     if copy_id:
-        print(book_list)
         if book_list[0][6] == 'rented':
             # redirect to the check out with a meaningful error message for the user
             message = 'This book is not available.'
@@ -626,7 +616,6 @@ def confirm_checkout():
 
     title = book_list[0][0]
     rent_bookcopy(book_id)
-    # print(f'title rented: {title}')
     return render_template('welcome.html', title=title)
     # if the checkout succeeds, redirect to 'members' page with a success message
 
