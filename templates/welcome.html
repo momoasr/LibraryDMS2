@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Profile{% endblock %}
+{% block title %}Member Profile{% endblock %}
 {% block content %}
 <body>
 
@@ -41,7 +41,7 @@
 
     <div class="container">
         <h1>Welcome {{first_name}}</h1>
-        <h3>Your Library Card Number is: <u>{{card_number}}</u></h3>
+        <h3>Your Library Card Number is: <t> <u>{{card_number}}</u></h3>
         <pre></pre>
         
         <div>
@@ -72,12 +72,16 @@
                 <label>Email Address:</label>
                 {{email}}
                 <pre></pre>
+                <label>Status:</label>
+                {{status}}
+                <pre></pre>
+                <pre></pre>
                 <a href="{{url_for('account')}}">Change Account Info</a>
                 <pre></pre>
                 <a href="{{url_for('forgotPassword')}}">Forgot Password</a>
                 <pre></pre>
                 <form method="post" action="{{ url_for('delete_account') }}">
-                  <button>Request Account Deletion</button>
+                  <button>Delete Account</button>
                 </form>
             </div>
         </div>
@@ -129,3 +133,4 @@
 </form>
 </body>  
 {% endblock %}
+
