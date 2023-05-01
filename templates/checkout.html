@@ -4,38 +4,72 @@
 <div class="container">
     <h2 class="mb-3 pb-3">Checkout</h2>
     <div class="row">
-    <div class="row">
-        <div class="col-3">
-            <img src="{{url_for('static', filename='images/1001.png')}}" alt="">
-        </div>
-        <div class="col-6">
-            <table class="table">
-                <tr>
-                    <th>Id:</th>
-                    <td>1001</td>
+        <div class="row">
+            <div class="col-3">
+                <img src="{{url_for('static', filename='images/1001.png')}}" alt="">
+            </div>
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-12">
+                        <table>
+                            <tr>
+                                <th>Id:</th>
+                                <td>1001</td>
 
-                </tr>
-                <tr>
-                    <th>Title:</th>
-                    <td>Da Vinci Code,The</td>
-                </tr>
-                <tr>
-                    <th>Author:</th>
-                    <td>Brown, Dan</td>
-                </tr>
-                <tr>
-                    <th>Genre:</th>
-                    <td>Crime, Thriller & Adventure</td>
-                </tr>
-            </table>
+                            </tr>
+                            <tr>
+                                <th>Title:</th>
+                                <td>Da Vinci Code,The</td>
+                            </tr>
+                            <tr>
+                                <th>Author:</th>
+                                <td>Brown, Dan</td>
+                            </tr>
+                            <tr>
+                                <th>Genre:</th>
+                                <td>Crime, Thriller & Adventure</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-12 mt-2">
+                        <button class="btn btn-primary" disabled>Confirm</button>
+                        <a href="/" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3"></div>
+            <div class="col-6">
+                <h3 class="text-danger">You can not rent the selected book</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3"></div>
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-2">
+                        <img style="width: 5rem; margin-top: 1rem;"
+                            src="{{url_for('static', filename='images/1056.png')}}" alt="">
+                    </div>
+                    <div class="col-9">
+                        <table>
+                            <tr>
+                                <th>Reason:</th>
+                                <td>you have not returned the book in your possession.</td>
+                            </tr>
+                            <tr>
+                                <th>Title:</th>
+                                <td><b>The Broker</b></td>
+                            </tr>
+                            <tr>
+                                <th>Rental Dates:</th>
+                                <td>from <b>4/30/2023</b> to <b>5/05/2023</b></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-3"></div>
-        <div class="col-6">
-        <div class="btn btn-primary">Confirm</div>
-        <div class="btn btn-outline-secondary">Cancel</div>
-        </div>
-    </div>
-</div>
-{% endblock %}
+    {% endblock %}
