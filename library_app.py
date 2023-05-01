@@ -9,7 +9,7 @@ from datetime import date
 
 host = 'localhost'
 user = 'root'
-db_password = 'Y&suMokonzi@2023'
+db_password = 'db_password'
 schema = 'library'
 
 app = Flask(__name__)
@@ -937,18 +937,18 @@ def members():
             card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(
                 session['card_number'])
             return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
-                                   email=email, dob=dob, book_list=book_list, title=title)
+                                   email=email, dob=dob, status=status, book_list=book_list, title=title)
         if 'rent' in request.form:
             copy_id = request.form['rent']
             rent_bookcopy(copy_id)
             card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(
                 session['card_number'])
             return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
-                                   email=email, dob=dob, title=title)
+                                   email=email, status=status, dob=dob, title=title)
     card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(
         session['card_number'])
     return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
-                           email=email, dob=dob, title=title)
+                           email=email, dob=dob, status=status, title=title)
 
 
 @app.route('/delete_account', methods=['GET', 'POST'])
@@ -993,3 +993,4 @@ def logout():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
