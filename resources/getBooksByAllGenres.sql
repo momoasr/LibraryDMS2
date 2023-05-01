@@ -1,4 +1,4 @@
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getBookByGenre`(IN searchArg varchar(255))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getBookByAllGenre`(IN searchArg varchar(255))
 BEGIN
     DECLARE genreLength INT DEFAULT 0;
     DECLARE counter INT DEFAULT 0;
