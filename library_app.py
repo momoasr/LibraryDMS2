@@ -634,6 +634,16 @@ def checkout(book_id):
     
     return render_template('checkout.html', book_to_rent = book_to_rent, img_path = img_path)
 
+@app.route('/confirm_checkout', methods=['POST'])
+def confirm_checkout():
+    book_id = request.form['book_id']
+    print(f'book_id: {book_id}')
+
+    # TO DO: do the checkout here...
+    # if the checkout fails, 
+    # redirect to the check out with a meaningful error message for the user
+    return redirect(url_for('checkout', book_id = book_id))
+    # if the checkout succeeds, redirect to 'members' page with a success message
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
