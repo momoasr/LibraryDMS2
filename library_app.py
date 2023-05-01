@@ -9,7 +9,7 @@ from datetime import date
 
 host = 'localhost'
 user = 'root'
-db_password = 'db_password'
+db_password = 'MysqlDB1'
 schema = 'library'
 
 app = Flask(__name__)
@@ -234,9 +234,10 @@ def delete_member(copy_id):
 
 
 def rent_bookcopy(copy_id):
-    card_number, first_name, last_name, birth_date, email, status, copy_id, title = pull_records(
+    card_number, first_name, last_name, birth_date, email, status, mbr_copy_id, title = pull_records(
         session['card_number'])
-    if not copy_id:
+    print(card_number, first_name, last_name, birth_date, email, status, mbr_copy_id, title)
+    if mbr_copy_id:
         return False
     try:
         connection = mysql.connector.connect(
@@ -356,53 +357,17 @@ def pull_records(lcn):
     return card_number, first_name, last_name, birth_date, email, status, copy_id, title
 
 
-# def book_search(**criteria):
-#     search_type = criteria['type']
-#     value = criteria['value']
-#     try:
-#         connection = mysql.connector.connect(host=host, database=schema, user=user, password=db_password)
-#
-#         sql_select_query = "select distinct b.title, b.author, b.genre, bc.media_type, b.book_id, bc.copy_id " \
-#                            "from book b inner join bookcopy bc on b.book_id = bc.book_id " \
-#                            "where ucase(b." + search_type + ") like '%" + value + "%'"
-#
-#         cursor = connection.cursor()
-#         cursor.execute(sql_select_query)
-#         records = cursor.fetchall()
-#
-#         books = []
-#         for row in records:
-#             title = row[0]
-#             author = row[1]
-#             genre = row[2]
-#             media_type = row[3]
-#             book_id = row[4]
-#             copy_id = row[5]
-#             books.append(Book(int(book_id), title, author, genre, ''))
-#             # books.append([title, author, genre, media_type, book_id, copy_id])
-#             # print('title: ' + title + ' author: ' + author + ' genre: ' + genre + ' type: ' + media_type)
-#
-#     except mysql.connector.Error as error:
-#         print("Failed {}".format(error))
-#
-#     finally:
-#         if connection.is_connected():
-#             connection.close()
-#
-#     return books
-
-
 def book_records(**criteria):
     search_type = criteria['type']
     value = criteria['value']
+    print(search_type, value)
     try:
         connection = mysql.connector.connect(
             host=host, database=schema, user=user, password=db_password)
 
-        sql_select_query = "select distinct b.title, b.author, b.genre, bc.media_type, b.book_id, bc.copy_id " \
-                           "from book b inner join bookcopy bc on b.book_id = bc.book_id " \
-                           "where ucase(b." + search_type + ") like '%" + \
-            value + "%' and bc.checkout_status = 'available'"
+        sql_select_query = "select distinct b.title, b.author, b.genre, bc.media_type, b.book_id, bc.copy_id, " \
+                           "bc.checkout_status from book b inner join bookcopy bc on b.book_id = bc.book_id " \
+                           "where ucase(b." + search_type + ") like '%" + str(value) + "%'"
 
         cursor = connection.cursor()
         cursor.execute(sql_select_query)
@@ -416,7 +381,8 @@ def book_records(**criteria):
             media_type = row[3]
             book_id = row[4]
             copy_id = row[5]
-            books.append([title, author, genre, media_type, book_id, copy_id])
+            chk_status = row[6]
+            books.append([title, author, genre, media_type, book_id, copy_id, chk_status])
             # print('title: ' + title + ' author: ' + author + ' genre: ' + genre + ' type: ' + media_type)
 
     except mysql.connector.Error as error:
@@ -635,14 +601,33 @@ def checkout(book_id):
     return render_template('checkout.html', book_to_rent = book_to_rent, img_path = img_path)
 
 @app.route('/confirm_checkout', methods=['POST'])
+@authorized
 def confirm_checkout():
     book_id = request.form['book_id']
     print(f'book_id: {book_id}')
-
+    book_list = book_records(type='book_id', value=book_id)
     # TO DO: do the checkout here...
-    # if the checkout fails, 
-    # redirect to the check out with a meaningful error message for the user
-    return redirect(url_for('checkout', book_id = book_id))
+    # if the checkout fails,
+    # if not session['card_number']:
+    #     message = 'Please log in before renting a book.'
+    #     return render_template('login.html', message=message)
+    #
+    # else:
+    card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(session['card_number'])
+    # print(card_number, first_name, last_name, dob, email, status, copy_id, title)
+    if copy_id:
+        print(book_list)
+        if book_list[0][6] == 'rented':
+            # redirect to the check out with a meaningful error message for the user
+            message = 'This book is not available.'
+            return redirect(url_for('checkout', book_id = book_id, message=message))
+        message = 'You have not returned the book in your possession.'
+        return redirect(url_for('checkout', book_id=book_id, message=message))
+
+    title = book_list[0][0]
+    rent_bookcopy(book_id)
+    # print(f'title rented: {title}')
+    return render_template('welcome.html', title=title)
     # if the checkout succeeds, redirect to 'members' page with a success message
 
 @app.route('/register', methods=['GET', 'POST'])
