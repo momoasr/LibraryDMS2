@@ -988,7 +988,7 @@ def account_deleted():
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
     session.clear()
-    return render_template('home.html')
+    return redirect('/')
 
 
 if __name__ == "__main__":
