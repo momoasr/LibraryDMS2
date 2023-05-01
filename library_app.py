@@ -607,6 +607,11 @@ def fetch_next_set():
 
     return render_template('book_by_category.html', books=books)
 
+@app.route('/checkout/<book_id>')
+def checkout(book_id):
+    img_path = url_for('static', filename=f'images/{book_id}')
+    return render_template('checkout.html', book_id = book_id, img_path = img_path)
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

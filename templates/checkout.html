@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %} Checkout {% endblock %}
+{% block content %}
+<div class="container">
+    <h2 class="mb-3 pb-3">Checkout</h2>
+    <div class="row">
+    <div class="row">
+        <div class="col-3">
+            <img src="{{url_for('static', filename='images/1001.png')}}" alt="">
+        </div>
+        <div class="col-6">
+            <table class="table">
+                <tr>
+                    <th>Id:</th>
+                    <td>1001</td>
+
+                </tr>
+                <tr>
+                    <th>Title:</th>
+                    <td>Da Vinci Code,The</td>
+                </tr>
+                <tr>
+                    <th>Author:</th>
+                    <td>Brown, Dan</td>
+                </tr>
+                <tr>
+                    <th>Genre:</th>
+                    <td>Crime, Thriller & Adventure</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-6">
+        <div class="btn btn-primary">Confirm</div>
+        <div class="btn btn-outline-secondary">Cancel</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
