@@ -23,6 +23,7 @@ class Book:
         self.title = title
         self.author = author
         self.img_url = img_url
+        self.genre = None
 
 
 class Carousel:
@@ -521,12 +522,11 @@ def authenticate_PW(password):
     return True
 
 # HELPERS
-
-
 def find(arr, cat):
     for x in arr:
         if x.category == cat:
             return x
+
 # END HELPERS
 
 
@@ -607,6 +607,43 @@ def fetch_next_set():
 
     return render_template('book_by_category.html', books=books)
 
+@app.route('/checkout/<book_id>')
+def checkout(book_id):
+    book_to_rent = None
+    
+    try:
+        connection = mysql.connector.connect(
+            host=host, database=schema, user=user, password=db_password)
+        
+        sql_select_query = 'SELECT * FROM library.book WHERE book_id = ' + book_id
+        cursor = connection.cursor()
+        cursor.execute(sql_select_query)
+        records = cursor.fetchall()
+        if len(records) > 0:
+            row = records[0]
+            img_path = url_for('static', filename=f'images/{book_id}.png')
+            book_to_rent = Book(row[0], row[1], row[2], img_path)
+            book_to_rent.genre = row[3]
+
+    except mysql.connector.Error as error:
+        print("Failed {}".format(error))
+
+    finally:
+        if connection.is_connected():
+            connection.close()
+    
+    return render_template('checkout.html', book_to_rent = book_to_rent, img_path = img_path)
+
+@app.route('/confirm_checkout', methods=['POST'])
+def confirm_checkout():
+    book_id = request.form['book_id']
+    print(f'book_id: {book_id}')
+
+    # TO DO: do the checkout here...
+    # if the checkout fails, 
+    # redirect to the check out with a meaningful error message for the user
+    return redirect(url_for('checkout', book_id = book_id))
+    # if the checkout succeeds, redirect to 'members' page with a success message
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
