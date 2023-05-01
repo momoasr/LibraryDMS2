@@ -20,9 +20,9 @@ def admin_id_generator(max_nbr):
     return next_nbr
 
 
-first_name = input('enter admin first name')
-last_name = input('enter admin last name')
-password = input('enter admin password')
+first_name = input('Enter admin first name: ')
+last_name = input('Enter admin last name: ')
+password = input('Enter admin password: ')
 
 
 hashedpwd = hash_pw(password)
