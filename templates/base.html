@@ -24,24 +24,41 @@
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="/">Home</a>
         </li>
-      {% if 'card_number' not in session %}
-      <li class="nav-item">
-        <a class="nav-link" href="/login">Log in</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/register">Register</a>
-      </li>
+        <!-- Only show Login/Register page if there is not an active session -->
+        {% if 'card_number' not in session and ('admin' not in session or session['admin'] == False) %}
+        <li class="nav-item">
+          <a class="nav-link" href="/login">Log in</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/register">Register</a>
+        </li>
+      {% else %}
+
+        <!-- Only show Admin Profile when Admin has active session -->
+        {% if 'admin' in session %}
+          <li class="nav-item">
+            <a class="nav-link" href="/admin">Admin Profile</a>
+          </li>
+        {% endif %}
       {% endif %}
+
         <li class="nav-item">
           <a class="nav-link" href="/about">About</a>
         </li>
 
+        <!-- Only show user profile when member has active session -->
+        {% if session.get('card_number') %}
       <li class="nav-item">
         <a class="nav-link" href="/members">Profile</a>
       </li>
+      {% endif %}
+
+     <!-- Only show logout in meny when session is active -->
+      {% if session.get('card_number') or 'admin' in session %}
       <li class="nav-item">
         <a class="nav-link" href="/logout">Log Out</a>
       </li>
+      {% endif %}
 
       </ul>
     </div>
@@ -56,3 +73,4 @@
 </body>
 
 </html>
+
