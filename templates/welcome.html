@@ -53,8 +53,7 @@
         <pre></pre>
 
         <button type='button' onclick="showText()">Account details</button>
-        <button>Set-up Return</button>
-        
+
         <div id='hidden' style='display: none'>
           <div class="account">
 
@@ -94,6 +93,10 @@
     </div>
 <pre></pre>
 <form action="/members" method="POST">
+<div class="container">
+    <button name="return" value={{copy_id}}>Return rental</button>
+</div>
+    <pre></pre>
                 <label>Search By:</label>
 
 <select name="criteria" id="criteria">

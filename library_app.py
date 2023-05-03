@@ -38,7 +38,6 @@ def authorized(f):
         if not session.get('card_number'):
             return render_template('login.html')
         return f(*args, **kwargs)
-
     return decorator
 
 
@@ -48,7 +47,6 @@ def authorized_admin(f):
         if not session.get('admin'):
             return render_template('login.html')
         return f(*args, **kwargs)
-
     return decorator
 
 
@@ -75,7 +73,6 @@ def check_member(lcn):
         # connect to mysql database
         connection = mysql.connector.connect(
             host=host, database=schema, user=user, password=db_password)
-        # min(card_number), max(card_number)
         sql_select_query = "select card_number from members"
         cursor = connection.cursor()
         cursor.execute(sql_select_query)
@@ -103,7 +100,7 @@ def check_admin(employee_id):
         # connect to mysql database
         connection = mysql.connector.connect(
             host=host, database=schema, user=user, password=db_password)
-        # min(card_number), max(card_number)
+
         sql_select_query = "select admin_id from admin"
         cursor = connection.cursor()
         cursor.execute(sql_select_query)
@@ -113,8 +110,6 @@ def check_admin(employee_id):
             admin_id = row[0]
             if admin_id == int(employee_id):
                 return True
-            # min_card = row[0]
-            # max_card = row[1]
 
     except mysql.connector.Error as error:
         print("Failed {}".format(error))
@@ -122,9 +117,6 @@ def check_admin(employee_id):
     finally:
         if connection.is_connected():
             connection.close()
-
-    # if min_card <= int(lcn) <= max_card:
-    #     return True
     return False
 
 
@@ -266,6 +258,34 @@ def rent_bookcopy(copy_id):
     return True
 
 
+def return_bookcopy(copy_id):
+    try:
+        connection = mysql.connector.connect(
+            host=host, database=schema, user=user, password=db_password)
+
+        sql = "UPDATE bookcopy SET checkout_status = %s WHERE copy_id = %s"
+        val = ('available', copy_id)
+        cursor = connection.cursor()
+        cursor.execute(sql, val)
+        connection.commit()
+        sql = "UPDATE checkout SET return_date = %s WHERE copy_id = %s"
+        val = (date.today(), copy_id)
+        cursor.execute(sql, val)
+        connection.commit()
+        sql = "UPDATE members SET copy_id = %s WHERE card_number = %s"
+        val = (None, session['card_number'])
+        cursor.execute(sql, val)
+        connection.commit()
+        cursor.close()
+
+    except mysql.connector.Error as error:
+        print("Failed {}".format(error))
+
+    finally:
+        if connection.is_connected():
+            connection.close()
+
+
 def pull_password(lcn):
     try:
         connection = mysql.connector.connect(
@@ -315,7 +335,6 @@ def pull_password_admin(employee_id):
 
 
 def pull_records(lcn):
-    print(lcn)
     try:
         # connect to mysql database
         connection = mysql.connector.connect(
@@ -359,7 +378,6 @@ def pull_records(lcn):
 def book_records(**criteria):
     search_type = criteria['type']
     value = criteria['value']
-    print(search_type, value)
     try:
         connection = mysql.connector.connect(
             host=host, database=schema, user=user, password=db_password)
@@ -382,7 +400,6 @@ def book_records(**criteria):
             copy_id = row[5]
             chk_status = row[6]
             books.append([title, author, genre, media_type, book_id, copy_id, chk_status])
-            # print('title: ' + title + ' author: ' + author + ' genre: ' + genre + ' type: ' + media_type)
 
     except mysql.connector.Error as error:
         print("Failed {}".format(error))
@@ -420,7 +437,6 @@ def member_records(**criteria):
             copy_id = row[6]
             _members.append([card_number, first_name, last_name,
                             birth_date, email, status, copy_id])
-            # print('title: ' + title + ' author: ' + author + ' genre: ' + genre + ' type: ' + media_type)
 
     except mysql.connector.Error as error:
         print("Failed {}".format(error))
@@ -452,7 +468,6 @@ def report_allcopies():
             genre = row[3]
             media_type = row[4]
             books.append([copy_id, title, author, genre, media_type])
-            # print('title: ' + title + ' author: ' + author + ' genre: ' + genre + ' type: ' + media_type)
 
     except mysql.connector.Error as error:
         print("Failed {}".format(error))
@@ -468,9 +483,6 @@ def validate(lcn, first, last, email_entered):
     if check_member(lcn):
         card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(
             lcn)
-        # print(card_number, first_name, last_name, email)
-        # print(first, last, email_entered)
-        # and dob_entered == dob:
         if (first == first_name) and (last == last_name) and (email_entered == email):
             return True
     return False
@@ -544,7 +556,6 @@ def fetch_next_set():
     category = request.args.get('category')
     page = request.args.get('page')
     searchBox = request.args.get("searchBox")
-    print(f'category: {category}, searchBox: {searchBox}, page: {page}')
 
     try:
         connection = mysql.connector.connect(
@@ -603,7 +614,6 @@ def checkout(book_id):
 @authorized
 def confirm_checkout():
     book_id = request.form['book_id']
-    print(f'book_id: {book_id}')
     book_list = book_records(type='book_id', value=book_id)
     card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(session['card_number'])
     if copy_id:
@@ -738,7 +748,8 @@ def account():
                 connection = mysql.connector.connect(host=host, database=schema, user=user,
                                                      password=db_password)
 
-                sql = "UPDATE members SET first_name = %s, last_name = %s, birth_date = %s, email_address = %s WHERE card_number = %s"
+                sql = "UPDATE members SET first_name = %s, last_name = %s, birth_date = %s, email_address = %s " \
+                      "WHERE card_number = %s"
                 val = (first_name, last_name, dob, email, lcn)
 
                 cursor = connection.cursor()
@@ -920,6 +931,13 @@ def members():
                 session['card_number'])
             return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
                                    email=email, status=status, dob=dob, title=title)
+        if 'return' in request.form:
+            copy_id = request.form['return']
+            return_bookcopy(copy_id)
+            card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(
+                session['card_number'])
+            return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
+                                   email=email, status=status, dob=dob, title=title)
     card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(
         session['card_number'])
     return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
@@ -929,8 +947,6 @@ def members():
 @app.route('/delete_account', methods=['GET', 'POST'])
 def delete_account():
     card_number = session['card_number']
-    # card_number = request.args.get('card_num', None)
-    # print(card_number)
     try:
         connection = mysql.connector.connect(
             host=host, database=schema, user=user, password=db_password)
