@@ -1,10 +1,11 @@
 {% extends "base.html" %}
 {% block title %}About{% endblock %}
 {% block content %}
-    <pre></pre>
+    <div class="about">
+        <pre></pre>
     <h1>About Us</h1>
     <pre></pre>
-    <div>
+    <div class="statement">
         <p>
         Welcome to our Library Database Management System website! Libraries play a large role in providing access to knowledge and encouraging learning.
         For this reason it is important to efficiently and effectively manage library data.
@@ -22,7 +23,7 @@
         else {text.style.display = "none";}
     }
     </script>
-    <button type='button' onclick="showText()">User Guide</button>
+    <button class="primary" type='button' onclick="showText()">User Guide</button>
     <!-- <p id='guide' style='display: none'>Hello Javascript</p> -->
     
     <div id='hidden' style='display: none'>
@@ -95,6 +96,8 @@
         </p><p>Group 3 Capstone - CMSC 495 7381</p>
         
     </div>
+    </div>
+    
 
 
 {% endblock %}
