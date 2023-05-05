@@ -23,7 +23,7 @@
     </div>
     <div class="col-12 d-flex p-3">
         <div class="carousel-arrow-wrapper">
-            <i class="bi bi-chevron-left carousel-arrow pointer hide-elt" data-dir="left"></i>
+            <i class="bi bi-chevron-left carousel-arrow pointer hide-elt" data-category="{{car.category}}" data-dir="left"></i>
         </div>
         <div class="carousel-image-block d-flex">
             {%for book in car.books%}
@@ -38,8 +38,8 @@
             {%endfor%}
         </div>
         <div class="carousel-arrow-wrapper">
-            <i data-category="{{car.category}}" data-page="1" data-dir="right"
-                class="bi bi-chevron-right carousel-arrow pointer {{ 'hide-elt' if car.next_set }}"></i>
+            <i data-category="{{car.category}}" data-page="1" data-dir="right" data-count={{car.page_count}}
+                class="bi bi-chevron-right carousel-arrow pointer {{ 'hide-elt' if not car.page_count > 1 }}"></i>
         </div>
     </div>
 </div>
@@ -52,6 +52,7 @@
             const e = arrows[i];
             e.addEventListener("click", (evt) => {
                 const category = e.dataset.category;
+                const page_count = +e.dataset.count;
                 const page = e.dataset.page;
                 const dir = e.dataset.dir;
                 const qStr = new URLSearchParams({
@@ -70,12 +71,30 @@
                             const imgBlocks = div.getElementsByClassName('carousel-image-block');
                             if (imgBlocks.length) {
                                 imgBlocks[0].innerHTML = resp;
-
+                                
                                 if (dir == 'left') {
+                                    const previousPageValue = (+page) == 0 ? 0 : (+page) - 1;
+                                    e.setAttribute('data-page', previousPageValue);
+
+                                    const rightArr = div.querySelector('[data-dir="right"]');
+                                    rightArr.classList.remove('hide-elt');
+                                    rightArr.setAttribute('data-page', (previousPageValue + 1));
+
+                                    if(previousPageValue == 0){
+                                        e.classList.add('hide-elt');
+                                    }
                                 }
                                 else {
                                     const nexPageValue = (+page) + 1;
                                     e.setAttribute('data-page', nexPageValue);
+                                    
+                                    const leftArr = div.querySelector('[data-dir="left"]');
+                                    leftArr.classList.remove('hide-elt');
+                                    leftArr.setAttribute('data-page', (page -1));
+                                    
+                                    if(nexPageValue == page_count){
+                                        e.classList.add('hide-elt');
+                                    }
                                 }
                             }
                         }
