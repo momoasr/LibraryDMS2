@@ -6,6 +6,7 @@ import mysql.connector
 from flask import *
 import bcrypt
 from datetime import date
+from enum import Enum
 
 host = 'localhost'
 user = 'root'
@@ -40,7 +41,10 @@ class Carousel:
         self.category = category
         self.page_count = None
 
-# class Return_Book_Result:
+class Return_Book_Result(Enum):
+    SUCCESS = 1
+    BOOK_NOT_PRESENT = 2
+    ERROR = 3
 
 def authorized(f):
     @wraps(f)
@@ -680,14 +684,25 @@ def confirm_checkout():
 
 @app.route('/return-current-book', methods=['POST'])
 def return_current_book():
+    status_code = None
+
     card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(
                 session['card_number'])
     if copy_id:
-        print(f'copy_id: {copy_id}')
         return_bookcopy(copy_id)
+        card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(
+                session['card_number'])
+        if not copy_id:
+            status_code = 200
+        else:
+            status_code = 400          
     else:
+        status_code = 404
 
-    return ''
+    new_resp = { 
+        'result': status_code
+    }
+    return new_resp, status_code
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
