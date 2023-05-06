@@ -30,13 +30,14 @@
                                 <td>{{ book_to_rent.genre}}</td>
                             </tr>
                             <th>Reason:</th>
-                                <td>message: {{message}}</td>
+                            <td>message: {{message}}</td>
                         </table>
                     </div>
                     <div class="col-12 mt-2 d-flex">
                         <form action="/confirm_checkout" method="POST">
                             <input type="hidden" name="book_id" value="{{ book_to_rent.book_id}}">
-                            <button type="submit" class="btn btn-primary me-2 {{ 'not-display' if rented_book }}">Confirm</button>
+                            <button type="submit"
+                                class="btn btn-primary me-2 {{ 'not-display' if rented_book }}">Confirm</button>
                         </form>
                         <a href="/" class="btn btn-outline-secondary">Cancel & Return to Catalog</a>
                     </div>
@@ -45,11 +46,14 @@
         </div>
         <div class="row {{ 'not-display' if not rented_book }}">
             <div class="col-3"></div>
-            <div class="col-5">
+            <div class="col-9">
                 <h3 class="text-danger">You can not rent the selected book</h3>
             </div>
-            <div class="col-3 {{ 'not-display' if not rented_book.can_return }}">
-                <button class="btn btn-danger">Return Current Book?</button>
+            <div class="col-3"></div>
+            <div class="col-9 {{ 'not-display' if not rented_book.can_return }}">
+                <button id="return-book" class="btn btn-danger">
+                    Do you want To Return What you have In Order To Rent The New One?
+                </button>
             </div>
         </div>
         <div class="row {{ 'not-display' if not rented_book }}">
@@ -57,8 +61,7 @@
             <div class="col-6">
                 <div class="row">
                     <div class="col-2">
-                        <img style="width: 5rem; margin-top: 1rem;"
-                            src="{{ rented_book.img_path }}" alt="">
+                        <img style="width: 5rem; margin-top: 1rem;" src="{{ rented_book.img_path }}" alt="">
                     </div>
                     <div class="col-9">
                         <table>
@@ -72,7 +75,11 @@
                             </tr>
                             <tr>
                                 <th>Checkout Date:</th>
-                                <td>{{ rented_book.checkout_date | dateimeformat }}</td>
+                                <td>
+                                    {% if rented_book %}
+                                    {{ rented_book.checkout_date | dateimeformat }}
+                                    {% endif %}
+                                </td>
                             </tr>
                         </table>
                     </div>
@@ -80,4 +87,21 @@
             </div>
         </div>
     </div>
+    <script>
+        window.onload = function () {
+            const returnBook = document.getElementById('return-book');
+            returnBook.addEventListener("click", (evt) => {
+                if (confirm('Do you want to return the current book in your possesssion?')) {
+                    fetch('/return-current-book', {
+                        method: 'POST',
+                        Headers: {
+                            Accept: 'application.json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: {}
+                    })
+                }
+            });
+        }
+    </script>
     {% endblock %}

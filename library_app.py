@@ -34,13 +34,13 @@ class Rented_Book:
         self.err_msg = err_msg
         self.can_return = can_return
 
-
 class Carousel:
     def __init__(self, books, category):
         self.books = books
         self.category = category
         self.page_count = None
 
+# class Return_Book_Result:
 
 def authorized(f):
     @wraps(f)
@@ -677,6 +677,17 @@ def confirm_checkout():
     rent_bookcopy(book_id)
     return render_template('welcome.html', title=title)
     # if the checkout succeeds, redirect to 'members' page with a success message
+
+@app.route('/return-current-book', methods=['POST'])
+def return_current_book():
+    card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(
+                session['card_number'])
+    if copy_id:
+        print(f'copy_id: {copy_id}')
+        return_bookcopy(copy_id)
+    else:
+
+    return ''
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
