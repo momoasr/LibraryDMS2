@@ -9,7 +9,7 @@ from datetime import date
 
 host = 'localhost'
 user = 'root'
-db_password = 'MysqlDB1'
+db_password = 'Y&suMokonzi@2023'
 schema = 'library'
 
 app = Flask(__name__)
@@ -544,7 +544,8 @@ def home():
         records = cursor.fetchall()
         for gr in records:
             car = find(cars, gr[0])
-            car.page_count = gr[1]
+            if car:
+                car.page_count = gr[1]
             
     except mysql.connector.Error as error:
         print("Failed {}".format(error))
