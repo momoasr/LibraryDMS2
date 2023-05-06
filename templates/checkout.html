@@ -36,44 +36,43 @@
                     <div class="col-12 mt-2 d-flex">
                         <form action="/confirm_checkout" method="POST">
                             <input type="hidden" name="book_id" value="{{ book_to_rent.book_id}}">
-                            <button type="submit" class="btn btn-primary me-2">Confirm</button>
+                            <button type="submit" class="btn btn-primary me-2 {{ 'not-display' if rented_book }}">Confirm</button>
                         </form>
-                        <a href="/" class="btn btn-outline-secondary">Cancel</a>
+                        <a href="/" class="btn btn-outline-secondary">Cancel & Return to Catalog</a>
                     </div>
                 </div>
             </div>
         </div>
-        <div style="display: none;" class="row">
+        <div class="row {{ 'hide-elt' if not rented_book }}">
             <div class="col-3"></div>
             <div class="col-5">
                 <h3 class="text-danger">You can not rent the selected book</h3>
             </div>
-            <div class="col-3">
+            <div class="col-3 {{ 'hide-elt' if not rented_book.can_return }}">
                 <button class="btn btn-danger">Return Current Book?</button>
             </div>
         </div>
-        <div class="row">
+        <div class="row {{ 'hide-elt' if not rented_book }}">
             <div class="col-3"></div>
             <div class="col-6">
                 <div class="row">
                     <div class="col-2">
                         <img style="width: 5rem; margin-top: 1rem;"
-                            src="{{url_for('static', filename='images/1056.png')}}" alt="">
+                            src="{{ rented_book.img_path }}" alt="">
                     </div>
                     <div class="col-9">
                         <table>
                             <tr>
                                 <th>Reason:</th>
-<!--                                <td>{{message}}</td>-->
-                                <td>you have not returned the book in your possession.</td>
+                                <td>{{ rented_book.err_msg}}</td>
                             </tr>
                             <tr>
                                 <th>Title:</th>
-                                <td><b>The Broker</b></td>
+                                <td><b>{{ rented_book.title }}</b></td>
                             </tr>
                             <tr>
                                 <th>Checkout Date:</th>
-                                <td>4/30/2023</td>
+                                <td>{{ rented_book.checkout_date | dateimeformat }}</td>
                             </tr>
                         </table>
                     </div>

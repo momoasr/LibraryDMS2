@@ -41,6 +41,10 @@ body {
   visibility: hidden;
 }
 
+.not-display {
+  display: none;
+}
+
 /* For tables */
 
 table, th, td {

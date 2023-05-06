@@ -25,6 +25,15 @@ class Book:
         self.img_url = img_url
         self.genre = None
 
+class Rented_Book:
+    def __init__(self, copy_id, checkout_date, title, img_path, err_msg, can_return):
+        self.copy_id = copy_id
+        self.checkout_date = checkout_date
+        self.title = title
+        self.img_path = img_path
+        self.err_msg = err_msg
+        self.can_return = can_return
+
 
 class Carousel:
     def __init__(self, books, category):
@@ -505,6 +514,10 @@ def find(arr, cat):
         if x.category == cat:
             return x
 
+@app.template_filter('dateimeformat')
+def dateimeformat(value, format='%a %b %d, %Y'):
+    return value.strftime(format)
+
 # END HELPERS
 
 
@@ -592,6 +605,7 @@ def fetch_next_set():
 @app.route('/checkout/<book_id>')
 def checkout(book_id):
     book_to_rent = None
+    rented_book = None
     
     try:
         connection = mysql.connector.connect(
@@ -607,6 +621,35 @@ def checkout(book_id):
             book_to_rent = Book(row[0], row[1], row[2], img_path)
             book_to_rent.genre = row[3]
 
+        sql_rented_book = '''
+            SELECT CK.copy_id, CK.checkout_date, BK.title
+            FROM library.checkout CK
+            JOIN library.bookcopy BC
+            ON CK.copy_id = BC.book_id
+            JOIN library.book BK
+            ON CK.copy_id = BK.book_id
+            JOIN library.members MB
+            ON CK.copy_id = MB.copy_id
+            WHERE MB.card_number = 1001;
+        '''
+        cursor.execute(sql_rented_book)
+        result = cursor.fetchall()
+        if len(result):
+            res = result[0]
+            img_path = url_for('static', filename=f'images/{res[0]}.png')
+            err_msg = None
+            can_return = False
+            print(f'id (to rent): {book_to_rent.book_id}, id (rented): {res[0]}')
+            if book_to_rent:
+                if str(book_to_rent.book_id) == str(res[0]):
+                    err_msg = 'You have rented a copy of this book.'
+                else:
+                    err_msg = 'you have not returned the book in your possession.'
+                    can_return = True
+                
+                print(f'msg: {err_msg}')
+            rented_book = Rented_Book(res[0], res[1], res[2], img_path, err_msg, can_return)
+            
     except mysql.connector.Error as error:
         print("Failed {}".format(error))
 
@@ -614,7 +657,7 @@ def checkout(book_id):
         if connection.is_connected():
             connection.close()
     
-    return render_template('checkout.html', book_to_rent = book_to_rent, img_path = img_path)
+    return render_template('checkout.html', book_to_rent = book_to_rent, rented_book = rented_book)
 
 @app.route('/confirm_checkout', methods=['POST'])
 @authorized
