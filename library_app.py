@@ -9,7 +9,7 @@ from datetime import date
 
 host = 'localhost'
 user = 'root'
-db_password = 'Y&suMokonzi@2023'
+db_password = 'MysqlDB1'
 schema = 'library'
 
 app = Flask(__name__)
