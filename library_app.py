@@ -27,9 +27,10 @@ class Book:
 
 
 class Carousel:
-    def __init__(self, books, category, next_set):
+    def __init__(self, books, category):
         self.books = books
         self.category = category
+        self.page_count = None
 
 
 def authorized(f):
@@ -533,21 +534,25 @@ def home():
                         local_cat.books.append(bItem)
                     else:
                         bList = [bItem]
-                        cars.append(Carousel(bList, row[3], False))
+                        cars.append(Carousel(bList, row[3]))
                 else:
                     bList = [bItem]
-                    cars.append(Carousel(bList, row[3], False))
+                    cars.append(Carousel(bList, row[3]))
 
-        for car in cars:
-            if len(car.books) < 4:
-                car.next_set = True
+        sql_query = "SELECT genre, CEILING(COUNT(genre)/4) FROM book GROUP BY genre"
+        cursor.execute(sql_query)
+        records = cursor.fetchall()
+        for gr in records:
+            car = find(cars, gr[0])
+            car.page_count = gr[1]
+            
     except mysql.connector.Error as error:
         print("Failed {}".format(error))
 
     finally:
         if connection.is_connected():
             connection.close()
-
+    
     return render_template('home.html', carousels=cars, search_value=search_value)
 
 
