@@ -515,7 +515,7 @@ def find(arr, cat):
             return x
 
 @app.template_filter('dateimeformat')
-def dateimeformat(value, format='%a %b %d, %Y'):
+def dateimeformat(value, format='%a %b %d, %Y'):    
     return value.strftime(format)
 
 # END HELPERS
@@ -639,10 +639,9 @@ def checkout(book_id):
             img_path = url_for('static', filename=f'images/{res[0]}.png')
             err_msg = None
             can_return = False
-            print(f'id (to rent): {book_to_rent.book_id}, id (rented): {res[0]}')
             if book_to_rent:
                 if str(book_to_rent.book_id) == str(res[0]):
-                    err_msg = 'You have rented a copy of this book.'
+                    err_msg = 'You are already in possession of a copy of this book.'
                 else:
                     err_msg = 'you have not returned the book in your possession.'
                     can_return = True
