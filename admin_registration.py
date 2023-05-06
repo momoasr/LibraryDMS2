@@ -68,3 +68,4 @@ except mysql.connector.Error as error:
 finally:
     if connection.is_connected():
         connection.close()
+        print('Admin user added.')
