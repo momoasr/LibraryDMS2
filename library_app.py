@@ -938,12 +938,15 @@ def members():
             return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
                                    email=email, status=status, dob=dob, title=title)
         if 'return' in request.form:
-            copy_id = request.form['return']
-            return_bookcopy(copy_id)
             card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(
                 session['card_number'])
-            return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
-                                   email=email, status=status, dob=dob, title=title)
+            if copy_id:
+                return_bookcopy(copy_id)
+                card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(
+                    session['card_number'])
+                return render_template("welcome.html", card_number=card_number, first_name=first_name,
+                                       last_name=last_name,
+                                       email=email, status=status, dob=dob, title=title)
     card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(
         session['card_number'])
     return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
