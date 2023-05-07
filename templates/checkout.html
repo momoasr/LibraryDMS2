@@ -30,50 +30,56 @@
                                 <td>{{ book_to_rent.genre}}</td>
                             </tr>
                             <th>Reason:</th>
-                                <td>message: {{message}}</td>
+                            <td>message: {{message}}</td>
                         </table>
                     </div>
                     <div class="col-12 mt-2 d-flex">
                         <form action="/confirm_checkout" method="POST">
                             <input type="hidden" name="book_id" value="{{ book_to_rent.book_id}}">
-                            <button type="submit" class="btn btn-primary me-2">Confirm</button>
+                            <button id="confirm-btn" type="submit"
+                                class="btn btn-primary me-2 {{ 'not-display' if rented_book }}">Confirm</button>
                         </form>
-                        <a href="/" class="btn btn-outline-secondary">Cancel</a>
+                        <a href="/" class="btn btn-outline-secondary">Cancel & Return to Catalog</a>
                     </div>
                 </div>
             </div>
         </div>
-        <div style="display: none;" class="row">
+        <div class="row existing-book {{ 'not-display' if not rented_book }}">
             <div class="col-3"></div>
-            <div class="col-5">
+            <div class="col-9">
                 <h3 class="text-danger">You can not rent the selected book</h3>
             </div>
-            <div class="col-3">
-                <button class="btn btn-danger">Return Current Book?</button>
+            <div class="col-3"></div>
+            <div class="col-9 {{ 'not-display' if not rented_book.can_return }}">
+                <button id="return-book" class="btn btn-danger">
+                    Do you want To Return The Book you have Now In Order To Rent The New One?
+                </button>
             </div>
         </div>
-        <div class="row">
+        <div class="row existing-book {{ 'not-display' if not rented_book }}">
             <div class="col-3"></div>
             <div class="col-6">
                 <div class="row">
                     <div class="col-2">
-                        <img style="width: 5rem; margin-top: 1rem;"
-                            src="{{url_for('static', filename='images/1056.png')}}" alt="">
+                        <img style="width: 5rem; margin-top: 1rem;" src="{{ rented_book.img_path }}" alt="">
                     </div>
                     <div class="col-9">
                         <table>
                             <tr>
                                 <th>Reason:</th>
-<!--                                <td>{{message}}</td>-->
-                                <td>you have not returned the book in your possession.</td>
+                                <td>{{ rented_book.err_msg}}</td>
                             </tr>
                             <tr>
                                 <th>Title:</th>
-                                <td><b>The Broker</b></td>
+                                <td><b>{{ rented_book.title }}</b></td>
                             </tr>
                             <tr>
                                 <th>Checkout Date:</th>
-                                <td>4/30/2023</td>
+                                <td>
+                                    {% if rented_book %}
+                                    {{ rented_book.checkout_date | dateimeformat }}
+                                    {% endif %}
+                                </td>
                             </tr>
                         </table>
                     </div>
@@ -81,4 +87,47 @@
             </div>
         </div>
     </div>
+    <script>
+        window.onload = function () {
+            const returnBook = document.getElementById('return-book');
+            returnBook.addEventListener("click", (evt) => {
+                fetch('/return-current-book', {
+                    method: 'POST',
+                    Headers: {
+                        Accept: 'application.json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: {}
+                })
+                    .then(resp => resp.json())
+                    .then(resp => {
+                        console.log(`response: ${resp.result}`);
+
+                        if (resp.result == 200 || resp.result == 404) {
+                            const existing_books = document.getElementsByClassName('existing-book')
+                            for (let i = 0; i < existing_books.length; i++) {
+                                const e = existing_books[i];
+                                e.classList.add('not-display');
+                            }
+
+                            const confirmBtn = document.getElementById('confirm-btn');
+                            if (confirmBtn) {
+                                confirmBtn.classList.remove('not-display');
+                            }
+                        }
+
+                        const msg = 'Thank you for returning the book! You can rent the new book.';
+                        if (resp.result == 400) {
+                            msg = 'We could not return the book. Please check with the administrator if the issue persists.';
+                        }
+                        else if (resp.result == 404) {
+                            msg = 'We could not find the book you need to return.';
+                        }
+
+                        alert(msg);
+                    })
+
+            });
+        }
+    </script>
     {% endblock %}
