@@ -625,17 +625,17 @@ def checkout(book_id):
             book_to_rent = Book(row[0], row[1], row[2], img_path)
             book_to_rent.genre = row[3]
 
-        sql_rented_book = '''
-            SELECT CK.copy_id, CK.checkout_date, BK.title
-            FROM library.checkout CK
-            JOIN library.bookcopy BC
-            ON CK.copy_id = BC.book_id
-            JOIN library.book BK
-            ON CK.copy_id = BK.book_id
-            JOIN library.members MB
-            ON CK.copy_id = MB.copy_id
-            WHERE MB.card_number = 1001;
-        '''
+        card_number = session['card_number']
+        sql_rented_book = "SELECT CK.copy_id, CK.checkout_date, BK.title"\
+            " FROM library.checkout CK " \
+            " JOIN library.bookcopy BC " \
+            " ON CK.copy_id = BC.book_id " \
+            " JOIN library.book BK " \
+            " ON CK.copy_id = BK.book_id " \
+            " JOIN library.members MB " \
+            " ON CK.copy_id = MB.copy_id " \
+            " WHERE MB.card_number = " + str(card_number)
+
         cursor.execute(sql_rented_book)
         result = cursor.fetchall()
         if len(result):
