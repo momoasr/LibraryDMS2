@@ -64,6 +64,7 @@ body {
 .carousel-image-wrapper {
   flex-grow: 1; 
   padding: 0 1rem;
+  width: 11rem;
 }
 
 .carousel-image {
@@ -79,6 +80,11 @@ body {
 .hide-elt {
   visibility: hidden;
 }
+
+.not-display {
+  display: none;
+}
+
 /* Home Design End */
 
 /* Table Design */
@@ -117,8 +123,8 @@ td {
 
   /* End Table Design */
 
-  /* contact Form Design */
-  .contact_form{
+  /* Form Design */
+  .form{
     width: 80%;
     margin: 50px auto;
     padding: 50px;
@@ -129,11 +135,35 @@ td {
     border-radius: 25px;
   }
 
-  .contact_form h1 {
+  .form h1 {
     text-align: center;
     margin-bottom: 80px;
   }
+  .form label{
+    padding-bottom: 20px;
+    font-size: large;
+  }
+  .form input{
+    margin-bottom: 5px;
+  }
+  /* Form Design End */
 
+/* contact Form Design */
+.contact_form{
+  width: 80%;
+  margin: 50px auto;
+  padding: 50px;
+  border-left: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  background-color:#d9b29bee;
+  box-shadow: 0 8px 32px 0 #996f55ee;
+  border-radius: 25px;
+}
+
+.contact_form h1 {
+  text-align: center;
+  margin-bottom: 80px;
+}
   .contact_form input{
     width: 200px;
     border-radius: 5px;
@@ -237,6 +267,7 @@ td {
 
 /* Account Design End*/
 
+/* Admin Design */
 .admin-form{
   padding: 45px;
 }
@@ -264,6 +295,7 @@ td {
   margin-right: 30px;
 
 }
+/* Admin Design End */
 
 /* About Design */
 .about{
@@ -281,6 +313,44 @@ td {
 }
 /* About Design End */
 
+/* Welcome Design */
+.welcome{
+  padding: 15px;
+}
+.welcome h1{
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 15px;
+}
+.welcome h3{
+  text-align: center;
+  font-size: medium;
+}
+.rent-list h3{
+  text-align: left;
+  font-size: large;
+  padding-top: 50px;
+  padding-left: 50px;
+  font-weight: bold;
+}
+.rent-list li{
+  padding-left: 50px;
+
+  font-size: medium;
+}
+.browse{
+  text-align: center;
+  padding-top: 35px;
+  padding-bottom: 20px;
+  font-size: large;
+}
+.browse input, select{
+  border-radius: 5px;
+  height: 40px;
+  text-align: center;
+
+}
+/* Welcome Design End*/
 .row{
   border-radius: 10px;
   width: auto;

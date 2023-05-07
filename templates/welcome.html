@@ -39,12 +39,12 @@
   }
   </script>
 
-    <div class="container">
-        <h1>Welcome {{first_name}}</h1>
+    <div class="welcome">
+        <h1 class="card-number">Welcome {{first_name}}</h1>
         <h3>Your Library Card Number is: <t> <u>{{card_number}}</u></h3>
         <pre></pre>
         
-        <div>
+        <div class="rent-list">
           <ul>
         <h3>Books currently being rented:</h3>
             <li>{{title}}</li>
@@ -102,18 +102,19 @@
     <button class="primary" name="return" value={{copy_id}}>Return Rental</button>
 </div>
     <pre></pre>
-                <label>Search By:</label>
+    <div class="browse">
+      <label>Search By:</label>
 
-<select name="criteria" id="criteria">
-  <option value="title">Title</option>
-  <option value="author">Author</option>
-  <option value="genre">Genre</option>
-</select>
-
-
-        <pre></pre>
-        <Input type="search" name="value" placeholder="Item lookup"></Input>
-        <button class="secondary">Browse</button>
+      <select name="criteria" id="criteria">
+        <option value="title">Title</option>
+        <option value="author">Author</option>
+        <option value="genre">Genre</option>
+      </select>
+     
+      <Input type="search" name="value" placeholder="Item lookup"></Input>
+      <button class="secondary">Browse</button>
+    </div>
+  
         <table cellspacing="0">
   <thead>
     <tr>
