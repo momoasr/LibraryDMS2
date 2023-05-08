@@ -1,11 +1,14 @@
 {% extends "base.html" %}
 {% block title %}Admin Profile{% endblock %}
 {% block content %}
-<h1>Welcome Admin</h1>
+<div class="admin-form">
+  
 <form action="/admin" method="POST">
-    <button type="submit" name="mbr_report">Generate All Member Report</button>
-    <button type="submit" name="copy_report">Generate All Copies Report</button>
-<button>Contact IT</button>
+  <h1>Welcome Admin</h1>
+    <button class="primary" type="submit" name="mbr_report">Generate All Member Report</button>
+    <button class="primary" type="submit" name="copy_report">Generate All Copies Report</button>
+    <a href="{{url_for('contact')}}">
+    <button class="primary" type="button">Contact IT</button></a>
 
 
     <div class="container">
@@ -21,7 +24,7 @@
 
         <pre></pre>
         <Input type="search" name="value" placeholder="Item lookup"></Input>
-        <button>Browse</button>
+        <button class="secondary">Browse</button>
 
         <pre></pre>
                 <label>Search By:</label>
@@ -34,11 +37,13 @@
 
         <pre></pre>
         <Input type="search" name="value2" placeholder="Member lookup"></Input>
-        <button>Search</button>
+        <button class="secondary">Search</button>
         
     </div>
 
-    <a href="{{url_for('book_edit')}}">Edit a book entry</a>
+    <a href=></a>
+    <a href="{{url_for('book_edit')}}">
+      <button class="primary" type="button">Edit A Book Entry</button></a>
         <p>{{message}}</p>
     <table>
   <thead>
@@ -49,6 +54,9 @@
         <th>Media Type</th>
         <th>Book ID</th>
         <th>Copy ID</th>
+        <th>Status</th>
+        <th>Make Update</th>
+        <th>Delete</th>
     </tr>
   </thead>
   <tbody>
@@ -58,10 +66,10 @@
         <td>{{book}}&nbsp&nbsp&nbsp&nbsp</td>
         {% endfor %}
         <td>
-            <button type="submit" name="update" value={{row[4]}}>Update</button>
+            <button class="secondary" type="submit" name="update" value={{row[4]}}>Update</button>
         </td>
         <td>
-            <button type="submit" name="delete" value={{row[5]}}>Delete</button>
+            <button class="secondary" type="submit" name="delete" value={{row[5]}}>Delete</button>
         </td>
     </tr>
   {% endfor %}
@@ -78,6 +86,8 @@
         <th>Email Address</th>
         <th>Status</th>
         <th>Copy ID</th>
+        <th>Update Member Info</th>
+        <th>Delete</th>
 
     </tr>
   </thead>
@@ -89,10 +99,10 @@
 
         {% endfor %}
         <td>
-                <button type="submit" name="update2" value={{row[0]}}>Update</button>
+                <button class="secondary" type="submit" name="update2" value={{row[0]}}>Update</button>
             </td>
             <td>
-                <button type="submit" name="delete2" value={{row[0]}}>Delete</button>
+                <button class="secondary" type="submit" name="delete2" value={{row[0]}}>Delete</button>
             </td>
     </tr>
 
@@ -100,4 +110,6 @@
   </tbody>
 </table>
         </form>
+</div>
+
 {% endblock %}

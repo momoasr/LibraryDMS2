@@ -1,10 +1,11 @@
 {% extends "base.html" %}
 {% block title %}About{% endblock %}
 {% block content %}
-    <pre></pre>
+    <div class="about">
+        <pre></pre>
     <h1>About Us</h1>
     <pre></pre>
-    <div>
+    <div class="statement">
         <p>
         Welcome to our Library Database Management System website! Libraries play a large role in providing access to knowledge and encouraging learning.
         For this reason it is important to efficiently and effectively manage library data.
@@ -15,86 +16,136 @@
         </p>
     </div>
     <pre></pre>
-    <script>
-    function showText() {
-        var text = document.getElementById("hidden");
-        if (text.style.display === "none") {text.style.display = "block";}
-        else {text.style.display = "none";}
-    }
-    </script>
-    <button type='button' onclick="showText()">User Guide</button>
-    <!-- <p id='guide' style='display: none'>Hello Javascript</p> -->
     
-    <div id='hidden' style='display: none'>
-        <ul>
+    <div class="user-guide">
+            
             <h1>User Guide</h1>
-            <label><strong>Search</strong></label>
-            <li>In the upper right hand corner,
-                click on the dropdown menu. Select your 
-                search prefrence and enter your search in the field.
-            </li>
+            
+            <div class="drop">
+                <span><strong>Search</strong></span>
+                <div class="drop-text">
+                    <p>
+                    In the upper right hand corner,
+                    click on the dropdown menu. Select your 
+                    search prefrence and enter your search in the field.
+                    </p>
+                </div>
+            </div>
             <pre></pre>
-            <label><strong>Registration</strong></label>
-            <li>Within the navigation bar click on "Register".
+            <div class="drop">
+            <span><strong>Registration</strong></span>
+            <div class="drop-text">
+            <p>Within the navigation bar click on "Register".
                 Fill out the form and create a password.
                 Once completed and submitted you will be given 
                 your libary card number.
-            </li>
+            </p>  
+            </div>
+            </div>
             <pre></pre>
-            <label><strong>Log-In</strong></label>
-            <li>Within the navigation bar click on "Login".
-                Enter your libary card number and the password you created.
-                Click login.
-            </li>
+            <div class="drop">
+                <span><strong>Log-In</strong></span>
+                <div class="drop-text">
+                    <p>
+                    Within the navigation bar click on "Login".
+                    Enter your libary card number and the password you created.
+                    Click login.
+                    </p>
+                </div>
+            </div>
             <pre></pre>
-            <label><strong>Log-Out</strong></label>
-            <li>Within the navigation bar click on "Logout".
-            </li>
+            <div class="drop">
+                <span><strong>Log-Out</strong></span>
+                <div class="drop-text">
+                    <p>
+                    Within the navigation bar click on "Logout".
+                    </p>
+                </div>
+            </div>
             <pre></pre>
-            <label><strong>Recover Password</strong></label>
-            <li>From the login page click "Forgot Password".
-                Once on the password reset form enter in your
-                libary card number and personal information.
-                click submit and your password should reset.
-            </li>
+            <div class="drop">
+                <span><strong>Recover Password</strong></span>
+                <div class="drop-text">
+                    <p>
+                    From the login page click "Forgot Password".
+                    Once on the password reset form enter in your
+                    libary card number and personal information.
+                    click submit and your password should reset.
+                    </p>
+                </div>
+            </div>
             <pre></pre>
-            <label><strong>Change Account information:</strong></label>
-            <li>Log in to your account using your credentials. 
-                From your account click "Account details" & "Change Account Info".
-                Fill out ALL fields within the form with updated information,
-                and validate with your libary card number.
-            </li>
+            <div class="drop">
+                <span><strong>Change Account information</strong></span>
+                <div class="drop-text">
+                    <p>
+                    Log in to your account using your credentials. 
+                    From your account click "Account details" & "Change Account Info".
+                    Fill out ALL fields within the form with updated information,
+                    and validate with your libary card number.
+                    </p>
+                </div>
+            </div>
             <pre></pre>
-            <label><strong>Change Password:</strong></label>
-            <li>Log in to your account using your credentials. 
-                From your account click "Account details" & Forgot Password.
-                Validate your request with you libary card number, & credentials.
-                Enter a new password and confirm it.
-            </li>
+            <div class="drop">
+                <span><strong>Change Password</strong></span>
+                <div class="drop-text">
+                    <p>
+                    Log in to your account using your credentials. 
+                    From your account click "Account details" & Forgot Password.
+                    Validate your request with you libary card number, & credentials.
+                    Enter a new password and confirm it.
+                    </p>
+                </div>
+            </div>
             <pre></pre>
-            <label><strong>Request Account Deletion:</strong></label>
-            <li>Log in to your account using your credentials. 
-                From your account click "Account details" & Request Account Deletion.
-                You will lose your account but be eliglble to reinstate it.
-            </li>
-
-
-        </ul>
+            <div class="drop">
+                <span><strong>Rent A Book</strong></span>
+                <div class="drop-text">
+                    <p>
+                    Log in to your account. Search for a book either from the home page
+                    or members page. Click the option to rent the selected book. 
+                    The selected book will now display on your profile page as being rented.
+                    </p>
+                </div>
+            </div>
+            <pre></pre>
+            <div class="drop">
+                <span><strong>Return Rental</strong></span>
+                <div class="drop-text">
+                    <p>
+                    Log in then click the “Return rental” button on your profile page.
+                    </p>
+                </div>
+            </div>
+            <pre></pre>
+            <div class="drop">
+                <span><strong>Request Account Deletion</strong></span>
+                <div class="drop-text">
+                    <p>
+                    Log in to your account using your credentials. 
+                    From your account click "Account details" & Request Account Deletion.
+                    You will lose your account but be eliglble to reinstate it.
+                    </p>
+                </div>
+            </div>
     </div>
 
     <pre></pre>
-    <div>
-        <p><strong>Created By:</strong></p>
-        <p> Jordan Abuhantash,
-            Michael Wood,
-            Monia Akele-Sita,
+    <div class="footer">
+        <h3>Created By: </h3>
+        <p> Jordan Abuhantash &#8212
+            Michael Wood &#8212
+            Monia Akele-Sita &#8212
             Nicholas Smith
         </p>
         <pre></pre>
-        <p><strong>University Of Maryland Global Campus</strong>
-        </p><p>Group 3 Capstone - CMSC 495 7381</p>
+        <h3>University Of Maryland Global Campus</h3>
+        <p>Group 3 Capstone - CMSC 495 7381</p>
         
     </div>
+    </div>
+    
 
 
 {% endblock %}

@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Reset Password{% endblock %}
 {% block content %}
-<h1>Reset Password</h1>
-<form action="forgotPassword" method="POST">
+
+<div class="form">
+    <h1>Reset Password</h1>
+    <form action="forgotPassword" method="POST">
 
     <div class="form-grp">
         <label for="LCN">Card Number</label>
@@ -47,11 +49,15 @@
 
     <p>{{message}}</p>
         <form action = "/forgotPassword" method='post'>
-            <input type="submit" value="Try Again"/>
+            <!-- <input type="submit" value="Try Again"/> -->
+            <button class="secondary" type="submit" >Try Again</button>
         </form>
 
     <div>
         <a href="{{url_for('login')}}">Login</a>
     </div>
 </form>
+</div>
+
+
 {% endblock %}

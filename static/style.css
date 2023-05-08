@@ -3,6 +3,46 @@ body {
   background: rgb(240, 209, 191) !important;
 }
 
+/* button design */
+.primary {
+  background-color: black;
+  color: white;
+  border-radius: 4px;
+  min-height: 40px;
+  min-width: 10px;
+  border-style: none;
+  box-sizing: border-box;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  max-width: none;
+  padding: 9px 20px 8px;
+  position: relative;
+  width: 100%;
+}
+.secondary {
+  background-color: black;
+  color: white;
+  border-radius: 4px;
+  min-height: 40px;
+  min-width: 10px;
+  border-style: none;
+  box-sizing: border-box;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+  max-width: 120px;
+  padding: 9px 20px 8px;
+  position: relative;
+  width: 100%;
+}
+/* End button design */
+
+/* Home Design */
+
+
 .carousel {
   background: rgb(247, 245, 244);
   margin: 3rem auto;
@@ -45,54 +85,91 @@ body {
   display: none;
 }
 
-/* For tables */
+/* Home Design End */
 
-table, th, td {
-  border-collapse: collapse;
+/* Table Design */
+table, th, td { 
   align-content: space-evenly;
-  padding: 15px;
+  padding: 15px; 
+}
+
+th, td {
+  border: solid 1px black;
 }
 
 table{
   margin-top: 20px;
   width: 100%;
-  border: 2px solid black;
+  border-left: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  border-collapse: separate;
+  border-radius: 10px;
+  background-color:#d9b29bee;
+  box-shadow: 0 8px 32px 0 #996f55ee;
+  
 }
-
-
 th {
   font-weight: bold;
-  border: 2px solid black;
   align-items: center;
+  background-color: white;
 }
-
 td {
-    border: 2px solid black;
-    background-color:rgb(204, 207, 209);
+    background-color:#d9b29bee;
   }
 
-  table tr td:nth-child(2) {
-    
-    width: 400px;
+  td:nth-child(1) {
+  font-weight: bold;
   }
 
-  /* contact form */
+  /* End Table Design */
 
-  .contact_form{
+  /* Form Design */
+  .form{
     width: 80%;
     margin: 50px auto;
     padding: 50px;
-    border: 2px solid black;
+    border-left: 1px solid rgba(255,255,255,0.06);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    background-color:#d9b29bee;
+    box-shadow: 0 8px 32px 0 #996f55ee;
     border-radius: 25px;
   }
 
-  .contact_form label{
-    margin-bottom: 7px;
-    margin-right: 7px;
+  .form h1 {
+    text-align: center;
+    margin-bottom: 80px;
   }
+  .form label{
+    padding-bottom: 20px;
+    font-size: large;
+  }
+  .form input{
+    margin-bottom: 5px;
+  }
+  /* Form Design End */
 
+/* contact Form Design */
+.contact_form{
+  width: 80%;
+  margin: 50px auto;
+  padding: 50px;
+  border-left: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  background-color:#d9b29bee;
+  box-shadow: 0 8px 32px 0 #996f55ee;
+  border-radius: 25px;
+}
+
+.contact_form h1 {
+  text-align: center;
+  margin-bottom: 80px;
+}
   .contact_form input{
     width: 200px;
+    border-radius: 5px;
+  }
+  .contact_form select{
+    border-radius: 5px;
   }
 
   .contact_form .inputs{
@@ -112,12 +189,17 @@ td {
     width: 100%;
     outline: none;
     padding: 10px;
+    border-radius: 10px;
   }
+   /* End Contact Form */
 
-  /* For account */
+  /* Account Design */
 
   .account{
-    border: 1px solid black;
+    border-left: 1px solid rgba(255,255,255,0.06);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    background-color:#d9b29bee;
+    box-shadow: 0 8px 32px 0 #996f55ee;
     border-radius: 10px;
     display: block;
     margin-top: 20px;
@@ -135,40 +217,45 @@ td {
   }
 
   .head-container{
-    border: 2px outset black;
     display: block;
     padding-left: 20px;
     margin-bottom: .5px;
+    text-align: center;
+    font-weight: bold;
+    
   }
   .head-container label{
     display: block;
-    text-emphasis: bold;
-    font-size: 12px;
+    font-weight: bold;
+    font-size: 14px;
     
   }
 
   .card-container{
-    border: 2px outset black;
+    border: 1px outset black;
+    border-radius: 15px;
+    background-color: white;
     display: block;
-    padding-left: 20px;
+    padding: 15px;
+    font-weight: bold;
+    text-align: center;
     margin-bottom: 5px;
   }
 
   .body-container{
-    border: 2px outset black;
     display: block;
     padding: 15px;
     padding-left: 30px;
     text-align: left;
     
   }
+  .button-container{
+    vertical-align: middle;
+  }
   .body-container label{
     display: block;
     float: left;
     padding-right: 50px;
-    
-    
-    
 
   }
   .body-container input{
@@ -177,3 +264,152 @@ td {
     align-items: center;
     margin-bottom: 25px;
   }
+
+/* Account Design End*/
+
+/* Admin Design */
+.admin-form{
+  padding: 45px;
+}
+
+.admin-form input{
+  border-radius: 5px;
+}
+
+.admin-form h1{
+  text-align: center;
+  margin-bottom: 50px;
+}
+.admin-form button{
+  margin-bottom: 35px;
+}
+
+.admin-form select{
+  border-radius: 5px;
+  width: 125px;
+  text-align: center;
+}
+
+.admin-form label{
+  font-weight: bold;
+  margin-right: 30px;
+
+}
+/* Admin Design End */
+
+/* About Design */
+.about{
+  padding: 45px;
+}
+.about h1{
+  text-align: center;
+  margin-bottom: 25px;
+}
+.statement{
+  border: solid black 2px;
+  padding: 15px;
+  border-radius: 10px;
+  background-color: white;
+}
+/* About Design End */
+
+/* Welcome Design */
+.welcome{
+  padding: 15px;
+}
+.welcome h1{
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 15px;
+}
+.welcome h3{
+  text-align: center;
+  font-size: medium;
+}
+.rent-list h3{
+  text-align: left;
+  font-size: large;
+  padding-top: 50px;
+  padding-left: 50px;
+  font-weight: bold;
+}
+.rent-list li{
+  padding-left: 50px;
+
+  font-size: medium;
+}
+.browse{
+  text-align: center;
+  padding-top: 35px;
+  padding-bottom: 20px;
+  font-size: large;
+}
+.browse input, select{
+  border-radius: 5px;
+  height: 40px;
+  text-align: center;
+
+}
+/* Welcome Design End*/
+.row{
+  border-radius: 10px;
+  border-left: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  background-color:#d9b29bee;
+  box-shadow: 0 8px 32px 0 #996f55ee;
+  text-align: center;
+}
+
+/* About page design */
+.user-guide{
+  width: 80%;
+  margin: 50px auto;
+  padding: 50px;
+  border-left: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  background-color:#d9b29bee;
+  box-shadow: 0 8px 32px 0 #996f55ee;
+  border-radius: 25px;
+  align-content: space-evenly;
+}
+.drop-text {
+  display: none;
+  position: absolute;
+  background-color: transparent;
+  max-width: fit-content;
+  max-height: fit-content;
+  padding: 10px;
+  padding-left: 25px;
+  text-align: left;
+  margin-left: 100px;
+  border-left: 4px solid rgba(255,255,255,0.06);
+  border-top: 4px solid rgba(255,255,255,0.06);
+  box-shadow: 0 8px 32px 0 #996f55ee;
+  border-radius: 25px;
+}
+.drop:hover .drop-text {
+  display: inline;
+}
+.drop:hover span {
+  color: white;
+}
+.drop-text:hover{
+  color: black;
+}
+.footer{
+  padding-top: 10px;
+  text-align: center;
+  border: 5px solid #996f55ee;
+  border-radius: 45px;
+  background-color: #996f55ee;
+  height: 150px;
+  font-size: medium;
+  color: white;
+  margin-top: 180px;
+}
+.footer h3, p{
+  display: inline-block;
+  font-size: 20px;
+  margin: 10px;
+}
+/* About page design End */

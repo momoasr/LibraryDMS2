@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Registration{% endblock %}
 {% block content %}
+<div class="form">
 <h1>Registration From</h1>
 <div id="error"></div>
 <form action="registerMbr" method="POST">
@@ -54,4 +55,6 @@
 
     <button class="primary" type="submit">Register</button>
 </form>
+</div>
+
 {% endblock %}
