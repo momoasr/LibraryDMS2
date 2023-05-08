@@ -360,3 +360,57 @@ td {
   box-shadow: 0 8px 32px 0 #996f55ee;
   text-align: center;
 }
+
+/* About page design */
+.user-guide{
+  width: 80%;
+  margin: 50px auto;
+  padding: 50px;
+  border-left: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  background-color:#d9b29bee;
+  box-shadow: 0 8px 32px 0 #996f55ee;
+  border-radius: 25px;
+  align-content: space-evenly;
+}
+.drop-text {
+  display: none;
+  position: absolute;
+  background-color: transparent;
+  max-width: fit-content;
+  max-height: fit-content;
+  padding: 10px;
+  padding-left: 25px;
+  text-align: left;
+  margin-left: 100px;
+  border-left: 4px solid rgba(255,255,255,0.06);
+  border-top: 4px solid rgba(255,255,255,0.06);
+  box-shadow: 0 8px 32px 0 #996f55ee;
+  border-radius: 25px;
+}
+.drop:hover .drop-text {
+  display: inline;
+}
+.drop:hover span {
+  color: white;
+}
+.drop-text:hover{
+  color: black;
+}
+.footer{
+  padding-top: 10px;
+  text-align: center;
+  border: 5px solid #996f55ee;
+  border-radius: 45px;
+  background-color: #996f55ee;
+  height: 150px;
+  font-size: medium;
+  color: white;
+  margin-top: 180px;
+}
+.footer h3, p{
+  display: inline-block;
+  font-size: 20px;
+  margin: 10px;
+}
+/* About page design End */
