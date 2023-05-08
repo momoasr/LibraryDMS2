@@ -1,7 +1,6 @@
 # Library Database Management System - create_db file- CMSC 495 group 3
 
-# run this file to create all tables and load the book and bookcopy tables with data from the
-# bookdata.csv and bookcopydata.csv files
+# run this file to create all tables and load the existing book data from csv files
 
 import mysql.connector
 import pandas as pd
