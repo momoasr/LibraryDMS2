@@ -10,7 +10,7 @@ from enum import Enum
 
 host = 'localhost'
 user = 'root'
-db_password = 'Y&suMokonzi@2023'
+db_password = 'db_password'
 schema = 'library'
 
 app = Flask(__name__)
