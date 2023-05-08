@@ -8,7 +8,7 @@ from datetime import datetime
 
 host = 'localhost'
 user = 'root'
-db_password = 'Nicholas'
+db_password = 'db_password'
 schema = 'library'
 
 try:
