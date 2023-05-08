@@ -3,7 +3,7 @@ import mysql.connector
 
 host = 'localhost'
 user = 'root'
-db_password = 'MysqlDB1'
+db_password = 'db_password'
 schema = 'library'
 
 
