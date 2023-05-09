@@ -10,7 +10,7 @@ from enum import Enum
 
 host = 'localhost'
 user = 'root'
-db_password = 'db_password'
+db_password = 'MysqlDB1'
 schema = 'library'
 
 app = Flask(__name__)
@@ -607,6 +607,7 @@ def fetch_next_set():
     return render_template('book_by_category.html', books=books)
 
 @app.route('/checkout/<book_id>')
+@authorized
 def checkout(book_id):
     book_to_rent = None
     rented_book = None
@@ -649,10 +650,10 @@ def checkout(book_id):
                 else:
                     err_msg = 'you have not returned the book in your possession.'
                     can_return = True
-                
+
                 print(f'msg: {err_msg}')
             rented_book = Rented_Book(res[0], res[1], res[2], img_path, err_msg, can_return)
-            
+
     except mysql.connector.Error as error:
         print("Failed {}".format(error))
 
