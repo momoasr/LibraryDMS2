@@ -8,6 +8,7 @@ import bcrypt
 from datetime import date
 from enum import Enum
 
+# update the below db_password with your personal MySQL password
 host = 'localhost'
 user = 'root'
 db_password = 'MysqlDB1'
@@ -17,7 +18,7 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'tempsecretkey'
 
-
+# Book, Rented_Book, Carousel and Return_Book_Result used for display of books in home page carousel
 class Book:
     def __init__(self, book_id, title, author, img_url):
         self.book_id = book_id
@@ -46,6 +47,7 @@ class Return_Book_Result(Enum):
     BOOK_NOT_PRESENT = 2
     ERROR = 3
 
+#wrapper methods to restrict a user from un authorized routes
 def authorized(f):
     @wraps(f)
     def decorator(*args, **kwargs):
@@ -106,7 +108,7 @@ def check_member(lcn):
 
     return False
 
-
+# check if the ID entered belongs to a registered Admin
 def check_admin(employee_id):
     min_card = 0
     max_card = 0
@@ -133,7 +135,7 @@ def check_admin(employee_id):
             connection.close()
     return False
 
-
+# check if a book_id is in the book table in the database
 def check_book(book_id):
     try:
         connection = mysql.connector.connect(
@@ -158,7 +160,7 @@ def check_book(book_id):
 
     return False
 
-
+# update the book table with entered title, author and genre
 def update_book(book_id, title, author, genre):
     try:
         connection = mysql.connector.connect(
@@ -179,7 +181,7 @@ def update_book(book_id, title, author, genre):
         if connection.is_connected():
             connection.close()
 
-
+# delete the book copy of the entered copy_id
 def delete_bookcopy(copy_id):
     try:
         connection = mysql.connector.connect(
@@ -196,7 +198,7 @@ def delete_bookcopy(copy_id):
         if connection.is_connected():
             connection.close()
 
-
+# update a member record in the members table with the entered arguments
 def update_member(card_number, first_name, last_name, email_address, status):
     try:
         connection = mysql.connector.connect(
@@ -218,7 +220,7 @@ def update_member(card_number, first_name, last_name, email_address, status):
         if connection.is_connected():
             connection.close()
 
-
+# delet the member from the database with the entered ID
 def delete_member(copy_id):
     try:
         connection = mysql.connector.connect(
@@ -238,7 +240,8 @@ def delete_member(copy_id):
         if connection.is_connected():
             connection.close()
 
-
+# update the bookcopy, checkout and members table with the entered ID. checkout_status set to 'rented', checkout_date
+# set to todays date and members copy_id set to the entered Id number
 def rent_bookcopy(copy_id):
     card_number, first_name, last_name, birth_date, email, status, mbr_copy_id, title = pull_records(
         session['card_number'])
@@ -271,7 +274,8 @@ def rent_bookcopy(copy_id):
             connection.close()
     return True
 
-
+# update the bookcopy, checkout and members table with the entered ID. checkout_status set to 'available', return_date
+# set to todays date and members copy_id set to null
 def return_bookcopy(copy_id):
     try:
         connection = mysql.connector.connect(
@@ -299,7 +303,7 @@ def return_bookcopy(copy_id):
         if connection.is_connected():
             connection.close()
 
-
+# pull the hashed password for the entered member library card number
 def pull_password(lcn):
     try:
         connection = mysql.connector.connect(
@@ -323,7 +327,7 @@ def pull_password(lcn):
             connection.close()
     return member_password
 
-
+# pull the hashed password for the entered admin ID
 def pull_password_admin(employee_id):
     try:
         connection = mysql.connector.connect(
@@ -347,7 +351,7 @@ def pull_password_admin(employee_id):
             connection.close()
     return admin_password
 
-
+# pull all members in the db for reporting
 def pull_records(lcn):
     try:
         # connect to mysql database
@@ -388,7 +392,7 @@ def pull_records(lcn):
 
     return card_number, first_name, last_name, birth_date, email, status, copy_id, title
 
-
+# pull all book copies in the db based on entered search criteria
 def book_records(**criteria):
     search_type = criteria['type']
     value = criteria['value']
@@ -424,7 +428,7 @@ def book_records(**criteria):
 
     return books
 
-
+# pull all members in the db based on entered search criteria
 def member_records(**criteria):
     search_type = criteria['type']
     value = criteria['value']
@@ -461,7 +465,7 @@ def member_records(**criteria):
 
     return _members
 
-
+# pull all book copies in the db for reporting
 def report_allcopies():
     try:
         connection = mysql.connector.connect(
@@ -492,7 +496,7 @@ def report_allcopies():
 
     return books
 
-
+# validate entered member information matches database records
 def validate(lcn, first, last, email_entered):
     if check_member(lcn):
         card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(
@@ -501,7 +505,7 @@ def validate(lcn, first, last, email_entered):
             return True
     return False
 
-
+# check that the password is not too short or too common
 def authenticate_PW(password):
     common_pws = ('password', 'password123', 'password1',
                   '12345', '12345678', '111111')
@@ -524,7 +528,7 @@ def dateimeformat(value, format='%a %b %d, %Y'):
 
 # END HELPERS
 
-
+# home page route
 @app.route('/', methods=['GET'])
 def home():
     search_value = request.args.get('search')
@@ -606,6 +610,7 @@ def fetch_next_set():
 
     return render_template('book_by_category.html', books=books)
 
+#checkout page route
 @app.route('/checkout/<book_id>')
 @authorized
 def checkout(book_id):
@@ -663,6 +668,7 @@ def checkout(book_id):
     
     return render_template('checkout.html', book_to_rent = book_to_rent, rented_book = rented_book)
 
+# confirm checkout, make sure the book is available and that the user does not have a current rental
 @app.route('/confirm_checkout', methods=['POST'])
 @authorized
 def confirm_checkout():
@@ -676,7 +682,6 @@ def confirm_checkout():
         # redirect to the check out with a meaningful error message for the user
         message = 'This book is not available.'
         return redirect(url_for('checkout', book_id = book_id, message=message))
-
 
     title = book_list[0][0]
     rent_bookcopy(book_id)
@@ -709,7 +714,7 @@ def return_current_book():
 def register():
     return render_template('register.html')
 
-
+# route to regiter member
 @app.route('/registerMbr', methods=['GET', 'POST'])
 def registerMbr():
     if request.method == 'POST':
@@ -720,8 +725,10 @@ def registerMbr():
         password1 = request.form['password1']
         password2 = request.form['password2']
 
+        # check that the passwords entered are the same
         if password1 == password2:
             if not authenticate_PW(password1):
+                # if the password fails authentication send a message
                 message = 'Your password is too common or too short, please enter another'
                 return render_template('register.html', message=message)
             else:
@@ -771,6 +778,7 @@ def registerMbr():
                     if connection.is_connected():
                         connection.close()
 
+                # pull member records with card number and return them with the welcome template
                 card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(
                     new_card)
                 return render_template("welcome.html", card_number=card_number, first_name=first_name,
@@ -780,18 +788,22 @@ def registerMbr():
         return render_template('register.html', message=message)
     return redirect('/register')
 
-
+# member login route
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
+        # check for an entered card number
         if request.form['cardnumber']:
+            # check if the entered number is a member
             if check_member(request.form['cardnumber']):
                 lcn = request.form['cardnumber']
                 password = request.form['password']
                 byte_pass = bytes(password, 'UTF-8')
+                # make sure entered password matches saved hashed password
                 if bcrypt.checkpw(byte_pass, bytes(pull_password(lcn), 'UTF-8')):
                     session['card_number'] = lcn
                     return redirect('/members')
+            # return template with appropriate message if filed login
             message = 'Incorrect Card Number or Password!'
             return render_template('login.html', message=message)
         message = 'Enter Card Number and Password!'
@@ -808,11 +820,12 @@ def about():
 def contact():
     return render_template('contact.html')
 
-
+# route for updating account info
 @app.route('/account', methods=['GET', 'POST'])
 def account():
     if request.method == 'POST':
         if request.form['cardnumber']:
+            # pull entered info from the form for updating the database
             lcn = request.form['cardnumber']
             first_name = request.form['firstname']
             last_name = request.form['lastname']
@@ -841,7 +854,7 @@ def account():
 
     return render_template('account.html')
 
-
+# route for member who forgot password
 @app.route('/forgotPassword', methods=['GET', 'POST'])
 def forgotPassword():
     if request.method == 'POST':
@@ -853,14 +866,18 @@ def forgotPassword():
             password1 = request.form['password1']
             password2 = request.form['password2']
 
+            # make sure the entered info matches the database info
             if validate(lcn, first_name, last_name, email):
+                # Make sure passwords match
                 if password1 == password2:
+                    # hash password
                     hashedpwd = hash_pw(password1)
                     string = hashedpwd.decode('utf-8')
                     try:
                         connection = mysql.connector.connect(host=host, database=schema, user=user,
                                                              password=db_password)
 
+                        # update the database with the new password
                         sql = "UPDATE memberpass SET hashedpw = %s WHERE card_number = %s"
                         val = (string, lcn)
 
@@ -876,75 +893,85 @@ def forgotPassword():
                         if connection.is_connected():
                             connection.close()
 
+                    # send the appropriate message back
                     message = 'Password updated successfully!'
                     return render_template('forgotPW.html', message=message)
-
                 message = 'Passwords did not match!'
                 return render_template('forgotPW.html', message=message)
-
             message = 'Invalid information entered!'
             return render_template('forgotPW.html', message=message)
         message = 'Make sure all fields are filled!'
         return render_template('forgotPW.html', message=message)
     return render_template('forgotPW.html')
 
-
+# administrator login route
 @app.route('/adminlogin', methods=['GET', 'POST'])
 def adminlogin():
     if request.method == 'POST':
         if request.form['employe_id']:
+            # check that the employee Id exists in the database
             if check_admin(request.form['employe_id']):
                 admin_id = request.form['employe_id']
                 password = request.form['password1']
                 byte_pass = bytes(password, 'UTF-8')
+                # check that the entered password matches the saved hashed password
                 if bcrypt.checkpw(byte_pass, bytes(pull_password_admin(admin_id), 'UTF-8')):
                     session['admin'] = admin_id
                     return redirect('/admin')
     return render_template('adminLogin.html')
 
-
+# admin portal route
 @app.route('/admin', methods=['GET', 'POST'])
 @authorized_admin
 def admin():
     if request.method == 'POST':
+        # depending on which action is taken on the admin page perform the appropriate action
         if request.form['value'] and request.form['criteria']:
             search_value = request.form['value']
             drop_down = request.form['criteria']
             book_list = book_records(type=drop_down, value=search_value)
+            # return book list by search
             return render_template('admin.html', book_list=book_list)
         elif request.form['value2'] and request.form['criteria2']:
             search_value = request.form['value2']
             drop_down = request.form['criteria2']
             member_list = member_records(type=drop_down, value=search_value)
+            # return member list by search
             return render_template('admin.html', member_list=member_list)
         if 'update' in request.form:
             book_id = request.form['update']
+            # send to book edit page with select book ID
             return render_template('bookedit.html', book_id=book_id)
         elif 'delete' in request.form:
             copy_id = request.form['delete']
+            # delete selected book and return message
             delete_bookcopy(copy_id)
             message = 'Copy Successfully Deleted'
             return render_template('admin.html', message=message)
         if 'update2' in request.form:
             card_number = request.form['update2']
+            # send to member edit page with selected card number
             return render_template('memberedit.html', card_number=card_number)
         elif 'delete2' in request.form:
             card_number = request.form['delete2']
+            # delete selected member and return message
             delete_member(card_number)
             message = 'Member Successfully Deleted'
             return render_template('admin.html', message=message)
         elif 'mbr_report' in request.form:
             member_list = member_records(type='first_name', value='')
+            # return an all member report list
             return render_template('admin.html', member_list=member_list)
         elif 'copy_report' in request.form:
             book_list = book_records(type='title', value='')
+            # return an all copy report list
             return render_template('admin.html', book_list=book_list)
         else:
             return render_template('admin.html')
 
     return render_template('admin.html')
 
-
+# route to get info from book edit page and update the database
 @app.route('/book_edit', methods=['GET', 'POST'])
 @authorized_admin
 def book_edit():
@@ -964,7 +991,7 @@ def book_edit():
         return render_template('bookedit.html', message=message)
     return render_template('bookedit.html')
 
-
+# rout to get member info from member edit page and update the databse
 @app.route('/member_edit', methods=['GET', 'POST'])
 @authorized_admin
 def member_edit():
@@ -986,7 +1013,7 @@ def member_edit():
         return render_template('memberedit.html', message=message)
     return render_template('memberedit.html')
 
-
+# route for members page
 @app.route('/members', methods=['GET', 'POST'])
 @authorized
 def members():
@@ -997,19 +1024,25 @@ def members():
             book_list = book_records(type=drop_down, value=search_value)
             card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(
                 session['card_number'])
+            # return list of books searched by entered criteria
             return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
                                    email=email, dob=dob, status=status, book_list=book_list, title=title)
+        # if rental button is selected
         if 'rent' in request.form:
             copy_id = request.form['rent']
+            # update the database with the rented book
             rent_bookcopy(copy_id)
             card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(
                 session['card_number'])
             return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
                                    email=email, status=status, dob=dob, title=title)
+        # if return button is selected
         if 'return' in request.form:
             card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(
                 session['card_number'])
+            # check if the member has a book rented
             if copy_id:
+                # update the database with that return
                 return_bookcopy(copy_id)
                 card_number, first_name, last_name, dob, email, status, copy_id, title = pull_records(
                     session['card_number'])
@@ -1021,7 +1054,7 @@ def members():
     return render_template("welcome.html", card_number=card_number, first_name=first_name, last_name=last_name,
                            email=email, dob=dob, status=status, title=title)
 
-
+# route to delete member profile
 @app.route('/delete_account', methods=['GET', 'POST'])
 def delete_account():
     card_number = session['card_number']
